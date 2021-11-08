@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,15 @@ class DefaultMarsControllerTest {
 
         //Assert
         assertTrue(quote != null && StringUtils.isNoneBlank(quote.getValue()));
+    }
+
+    @Test
+    void allQuotes(){
+        MarsController marsController = new DefaultMarsController();
+
+        List<Quote> quotes = marsController.allQuotes();
+
+        assertTrue(quotes.size() > 0 && !quotes.get(1).getValue().equals(""));
     }
 
     @Test

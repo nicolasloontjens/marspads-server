@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import org.junit.jupiter.api.*;
 
+import java.util.List;
 import java.util.Map;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,6 +39,13 @@ class MarsH2RepositoryTest {
 
         // Assert
         Assertions.assertTrue(quote != null && !StringUtil.isNullOrEmpty(quote.getValue()));
+    }
+
+    @Test
+    void allQuotes(){
+        List<Quote> quotes = Repositories.getH2Repo().allQuotes();
+
+        Assertions.assertTrue(quotes.size() > 0 && !quotes.get(1).getValue().equals(""));
     }
 
     @Test
