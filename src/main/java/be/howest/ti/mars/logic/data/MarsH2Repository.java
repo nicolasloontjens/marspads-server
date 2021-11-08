@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ public class MarsH2Repository {
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
     private static final String SQL_DELETE_QUOTE = "delete from quotes where id = ?;";
+    private static final String SQL_ALL_QUOTES = "select id, quote from quotes";
     private final Server dbWebConsole;
     private final String username;
     private final String password;
@@ -70,6 +73,23 @@ public class MarsH2Repository {
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Failed to get quote.", ex);
             throw new RepositoryException("Could not get quote.");
+        }
+    }
+
+    public List<Quote> allQuotes(){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_ALL_QUOTES);
+        ){
+            ResultSet rs = stmnt.executeQuery();
+            List<Quote> quotes = new ArrayList<>();
+            while(rs.next()){
+                quotes.add(new Quote(rs.getInt("id"),rs.getString("quote")));
+            }
+            return quotes;
+        }catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE,"Failed to get quotes", ex);
+            throw new RepositoryException("Could not get quotes");
         }
     }
 

@@ -10,6 +10,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,10 @@ public class MarsOpenApiBridge {
         Quote quote = controller.getQuote(Request.from(ctx).getQuoteId());
 
         Response.sendQuote(ctx, quote);
+    }
+
+    public void allQuotes(RoutingContext ctx){
+        List<Quote> quotes = controller.allQuotes();
     }
 
     public void createQuote(RoutingContext ctx) {
@@ -83,6 +88,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);
+
+        LOGGER.log(Level.INFO, "Installing handler for: allQuotes");
+        routerBuilder.operation("allQuotes").handler(this::allQuotes);
 
         LOGGER.log(Level.INFO, "Installing handler for: createQuote");
         routerBuilder.operation("createQuote").handler(this::createQuote);
