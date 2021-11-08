@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class OpenAPITest {
 
-    private static final int PORT = 8080;
+    private static final int PORT = 8089;
     private static final String HOST = "localhost";
     public static final String MSG_200_EXPECTED = "If all goes right, we expect a 200 status";
     public static final String MSG_201_EXPECTED = "If a resource is successfully created.";

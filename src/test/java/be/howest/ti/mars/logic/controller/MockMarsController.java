@@ -4,11 +4,22 @@ import be.howest.ti.mars.logic.domain.Quote;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MockMarsController implements MarsController {
     private static final String SOME_QUOTE = "quote";
     @Override
     public Quote getQuote(int quoteId) {
         return new Quote(quoteId, SOME_QUOTE);
+    }
+
+    @Override
+    public List<Quote> allQuotes() {
+        List<Quote> quotes = new ArrayList<>();
+        quotes.add(new Quote(1,"an interesting quote"));
+        quotes.add(new Quote(2,"an even more interesting quote"));
+        return quotes;
     }
 
     @Override

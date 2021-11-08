@@ -6,6 +6,8 @@ import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
 import io.vertx.core.Future;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * DefaultMarsController is the default implementation for the MarsController interface.
  * It should NOT be aware that it is used in the context of a webserver:
@@ -29,6 +31,11 @@ public class DefaultMarsController implements MarsController {
             throw new MarsResourceNotFoundException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
 
         return quote;
+    }
+
+    @Override
+    public List<Quote> allQuotes(){
+        return Repositories.getH2Repo().allQuotes();
     }
 
     @Override

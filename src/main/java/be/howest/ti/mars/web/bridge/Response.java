@@ -3,8 +3,11 @@ package be.howest.ti.mars.web.bridge;
 import be.howest.ti.mars.logic.domain.Quote;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+
+import java.util.List;
 
 /**
  * The Response class is responsible for translating the result of the controller into
@@ -16,6 +19,10 @@ public class Response {
 
     public static void sendQuote(RoutingContext ctx, Quote quote) {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
+    }
+
+    public static void sendAllQuotes(RoutingContext ctx, List<Quote> quotes){
+        sendJsonResponse(ctx,200, new JsonArray(quotes));
     }
 
     public static void sendQuoteCreated(RoutingContext ctx, Quote quote) {

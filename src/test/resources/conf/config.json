@@ -1,6 +1,6 @@
 {
   "http": {
-    "port": 8080
+    "port": 8089
   },
   "db" : {
     "url": "jdbc:h2:~/mars-db",
