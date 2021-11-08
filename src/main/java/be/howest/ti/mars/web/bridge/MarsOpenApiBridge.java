@@ -43,6 +43,8 @@ public class MarsOpenApiBridge {
 
     public void allQuotes(RoutingContext ctx){
         List<Quote> quotes = controller.allQuotes();
+
+        Response.sendAllQuotes(ctx,quotes);
     }
 
     public void createQuote(RoutingContext ctx) {

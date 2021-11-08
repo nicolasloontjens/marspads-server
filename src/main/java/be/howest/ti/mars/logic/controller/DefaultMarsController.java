@@ -35,9 +35,7 @@ public class DefaultMarsController implements MarsController {
 
     @Override
     public List<Quote> allQuotes(){
-        List<Quote> quotes = Repositories.getH2Repo().allQuotes();
-
-        return quotes;
+        return Repositories.getH2Repo().allQuotes();
     }
 
     @Override
