@@ -1,6 +1,7 @@
 package be.howest.ti.mars.logic.data;
 
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -31,6 +32,7 @@ To make this class useful, please complete it with the topics seen in the module
  */
 public class MarsH2Repository {
     private static final Logger LOGGER = Logger.getLogger(MarsH2Repository.class.getName());
+    private static final String SQL_INSERT_USER = "insert into users(marsid, name) values (?,?)";
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
@@ -54,6 +56,36 @@ public class MarsH2Repository {
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "DB configuration failed", ex);
             throw new RepositoryException("Could not configure MarsH2repository");
+        }
+    }
+
+    public User createUser(User user){
+        User currentuser = user;
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_USER);
+        ){
+            stmnt.setInt(1,currentuser.getMarsid());
+            stmnt.setString(2,currentuser.getName());
+
+            //check if an update occurred
+            int affectedRows = stmnt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+
+            try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    currentuser.setContactid(generatedKeys.getInt(3));
+                    return user;
+                }else{
+                    throw new SQLException("Creating user failed, no row affected");
+                }
+            }
+
+        }catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to create user.", ex);
+            throw new RepositoryException("Could not get user");
         }
     }
 
