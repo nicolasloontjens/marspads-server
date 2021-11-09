@@ -9,6 +9,8 @@ import java.util.List;
 public interface MarsController {
     User createUser(int marsid);
 
+    User getUser(int marsid);
+
     Quote getQuote(int quoteId);
 
     List<Quote> allQuotes();

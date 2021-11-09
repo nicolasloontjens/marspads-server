@@ -70,6 +70,28 @@ class OpenAPITest {
     }
 
     @Test
+    void createUser(final VertxTestContext testContext){
+        webClient.post(PORT,HOST, "/create/1").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(()->{
+                    assertEquals(200, response.statusCode());
+                    assertEquals(1,response.bodyAsJsonObject().getInteger("marsid"));
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
+    void getUser(final VertxTestContext testContext){
+        webClient.get(PORT,HOST,"/user/1").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(()->{
+                    assertEquals(200, response.statusCode());
+                    assertEquals("Joe",response.bodyAsJsonObject().getString("name"));
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
     void getRandomQuote(final VertxTestContext testContext) {
         webClient.get(PORT, HOST, "/api/quotes").send()
                 .onFailure(testContext::failNow)

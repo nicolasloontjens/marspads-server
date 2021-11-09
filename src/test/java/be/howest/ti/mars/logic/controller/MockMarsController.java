@@ -19,6 +19,11 @@ public class MockMarsController implements MarsController {
         return user;
     }
 
+    @Override public User getUser(int marsid){
+        users.add(new User(1,"Joe"));
+        return users.get(0);
+    }
+
     @Override
     public Quote getQuote(int quoteId) {
         return new Quote(quoteId, SOME_QUOTE);
