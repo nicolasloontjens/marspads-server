@@ -1,6 +1,7 @@
 package be.howest.ti.mars.logic.data;
 
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import io.netty.util.internal.StringUtil;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -27,6 +28,14 @@ class MarsH2RepositoryTest {
     @BeforeEach
     void setupTest() {
         Repositories.getH2Repo().generateData();
+    }
+
+    @Test
+    void createUser(){
+        User newuser = new User(1,"tester", -1);
+        Assertions.assertTrue(newuser.getMarsid() == 1 && newuser.getName().equals("tester") && newuser.getContactid() == -1);
+        User user = Repositories.getH2Repo().createUser(newuser);
+        Assertions.assertTrue(user.getMarsid() == 1 && user.getName().equals("tester"));
     }
 
     @Test

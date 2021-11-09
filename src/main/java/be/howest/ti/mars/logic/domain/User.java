@@ -14,7 +14,7 @@ public class User {
     public User(int marsid, String name){
         this.name = name;
         this.marsid = marsid;
-        this.contactid = 0;
+        this.contactid = -1;
     }
 
     public String getName() {

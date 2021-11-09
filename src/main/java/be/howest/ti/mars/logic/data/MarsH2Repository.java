@@ -63,7 +63,7 @@ public class MarsH2Repository {
         User currentuser = user;
         try(
                 Connection con = getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_USER);
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
         ){
             stmnt.setInt(1,currentuser.getMarsid());
             stmnt.setString(2,currentuser.getName());
@@ -76,7 +76,7 @@ public class MarsH2Repository {
 
             try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
                 if(generatedKeys.next()){
-                    currentuser.setContactid(generatedKeys.getInt(3));
+                    currentuser.setContactid(generatedKeys.getInt(2));
                     return user;
                 }else{
                     throw new SQLException("Creating user failed, no row affected");
