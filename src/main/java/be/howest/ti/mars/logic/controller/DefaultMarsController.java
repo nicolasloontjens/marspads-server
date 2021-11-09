@@ -57,6 +57,27 @@ public class DefaultMarsController implements MarsController {
         nameFaker.add("Nicolas");
         nameFaker.add("Reinaerd");
         nameFaker.add("Eduardo");
+        nameFaker.add("Billy");
+        nameFaker.add("Charlie");
+        nameFaker.add("Marc");
+        nameFaker.add("Jill");
+        nameFaker.add("Mathias");
+        nameFaker.add("Zorro");
+        nameFaker.add("Thomas");
+        nameFaker.add("Jonas");
+        nameFaker.add("Damiano");
+        nameFaker.add("Vicky");
+        nameFaker.add("Patrick");
+        nameFaker.add("Ezekiel");
+        nameFaker.add("Bobby");
+        nameFaker.add("James");
+        nameFaker.add("Emma");
+        nameFaker.add("Emily");
+        nameFaker.add("Rob");
+        nameFaker.add("Ben");
+        nameFaker.add("Thor");
+        nameFaker.add("Lando");
+        nameFaker.add("Alvin");
         int randnr = rand.nextInt(5);
         return nameFaker.get(randnr);
     }
