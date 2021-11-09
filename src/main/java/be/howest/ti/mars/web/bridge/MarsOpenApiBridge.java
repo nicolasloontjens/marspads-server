@@ -3,6 +3,7 @@ package be.howest.ti.mars.web.bridge;
 import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -33,6 +34,12 @@ public class MarsOpenApiBridge {
 
     public MarsOpenApiBridge(MarsController controller) {
         this.controller = controller;
+    }
+
+    public void createUser(RoutingContext ctx){
+        User user = controller.createUser(Request.from(ctx).getMarsId());
+
+        Response.sendUser(ctx, user);
     }
 
     public void getQuote(RoutingContext ctx) {
@@ -87,6 +94,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing failure handlers for all operations");
         routerBuilder.operations().forEach(op -> op.failureHandler(this::onFailedRequest));
+
+        LOGGER.log(Level.INFO, "Installing handler for: createUser");
+        routerBuilder.operation("createUser").handler(this::createUser);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);

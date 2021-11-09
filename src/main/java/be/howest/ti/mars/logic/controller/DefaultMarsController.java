@@ -2,11 +2,15 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
 import io.vertx.core.Future;
 import org.apache.commons.lang3.StringUtils;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * DefaultMarsController is the default implementation for the MarsController interface.
@@ -23,6 +27,30 @@ import java.util.List;
  */
 public class DefaultMarsController implements MarsController {
     private static final String MSG_QUOTE_ID_UNKNOWN = "No quote with id: %d";
+    private Random rand = new SecureRandom();
+
+    //create a user and put them in the database
+    @Override
+    public User createUser(int marsid){
+        //create user without contactid, pass to h2repo and return user with contactid in database
+        User user = Repositories.getH2Repo().createUser(new User(marsid, getRandomName()));
+        if(user.getContactid() == -1){
+            throw new MarsResourceNotFoundException("Could not add user to the database");
+        }
+        return user;
+    }
+
+    private String getRandomName(){
+        //since your marsid has your real name linked to it, we
+        List<String> nameFaker = new ArrayList<>();
+        nameFaker.add("Stijn");
+        nameFaker.add("Bilal");
+        nameFaker.add("Nicolas");
+        nameFaker.add("Reinaerd");
+        nameFaker.add("Eduardo");
+        int randnr = rand.nextInt(5);
+        return nameFaker.get(randnr);
+    }
 
     @Override
     public Quote getQuote(int quoteId) {

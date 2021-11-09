@@ -1,6 +1,7 @@
 package be.howest.ti.mars.web.bridge;
 
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
@@ -16,6 +17,10 @@ import java.util.List;
 public class Response {
 
     private Response() { }
+
+    public static void sendUser(RoutingContext ctx, User user){
+        sendJsonResponse(ctx, 200, JsonObject.mapFrom(user));
+    }
 
     public static void sendQuote(RoutingContext ctx, Quote quote) {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));

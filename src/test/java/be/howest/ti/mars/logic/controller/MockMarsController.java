@@ -1,6 +1,7 @@
 package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
@@ -9,6 +10,15 @@ import java.util.List;
 
 public class MockMarsController implements MarsController {
     private static final String SOME_QUOTE = "quote";
+    private List<User> users = new ArrayList<>();
+
+    @Override
+    public User createUser(int marsid){
+        User user = new User(1,"bob",234);
+        users.add(user);
+        return user;
+    }
+
     @Override
     public Quote getQuote(int quoteId) {
         return new Quote(quoteId, SOME_QUOTE);

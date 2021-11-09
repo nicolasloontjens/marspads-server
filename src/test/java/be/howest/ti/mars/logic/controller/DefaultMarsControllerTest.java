@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Quote;
+import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -35,6 +36,14 @@ class DefaultMarsControllerTest {
     @BeforeEach
     void setupTest() {
         Repositories.getH2Repo().generateData();
+    }
+
+    @Test
+    void createUser(){
+        MarsController marsController = new DefaultMarsController();
+
+        User user = marsController.createUser(1);
+        assertEquals(1, user.getContactid());
     }
 
     @Test
