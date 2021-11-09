@@ -42,6 +42,12 @@ public class MarsOpenApiBridge {
         Response.sendUser(ctx, user);
     }
 
+    public void getUser(RoutingContext ctx){
+        User user = controller.getUser(Request.from(ctx).getMarsId());
+
+        Response.sendUser(ctx, user);
+    }
+
     public void getQuote(RoutingContext ctx) {
         Quote quote = controller.getQuote(Request.from(ctx).getQuoteId());
 
@@ -97,6 +103,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: createUser");
         routerBuilder.operation("createUser").handler(this::createUser);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getUser");
+        routerBuilder.operation("getUser").handler(this::getUser);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);

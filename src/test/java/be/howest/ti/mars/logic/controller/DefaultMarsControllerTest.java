@@ -47,6 +47,15 @@ class DefaultMarsControllerTest {
     }
 
     @Test
+    void getUser(){
+        MarsController marsController = new DefaultMarsController();
+
+        User user = marsController.getUser(1);
+        assertEquals(1, user.getMarsid());
+        assertEquals()
+    }
+
+    @Test
     void getQuote() {
         // Arrange
         MarsController sut = new DefaultMarsController();

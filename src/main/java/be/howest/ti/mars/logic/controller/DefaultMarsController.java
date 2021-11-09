@@ -40,6 +40,15 @@ public class DefaultMarsController implements MarsController {
         return user;
     }
 
+    @Override
+    public User getUser(int marsid){
+        User user = Repositories.getH2Repo().getUser(marsid);
+        if(user == null){
+            throw new MarsResourceNotFoundException("Could not find a user with that marsid");
+        }
+        return user;
+    }
+
     private String getRandomName(){
         //since your marsid has your real name linked to it, we
         List<String> nameFaker = new ArrayList<>();
