@@ -19,7 +19,7 @@ public class Response {
     private Response() { }
 
     public static void sendUser(RoutingContext ctx, User user){
-        sendJsonResponse(ctx, 201, JsonObject.mapFrom(user));
+        sendJsonResponse(ctx, 200, JsonObject.mapFrom(user));
     }
 
     public static void sendQuote(RoutingContext ctx, Quote quote) {

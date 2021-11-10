@@ -25,5 +25,6 @@ drop table if exists usercontacts;
 create table usercontacts
 (
     marsid int not null,
-    contactid int not null
+    contactid int not null,
+    unique(marsid, contactid)
 );
