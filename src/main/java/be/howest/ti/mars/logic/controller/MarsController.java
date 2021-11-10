@@ -11,6 +11,8 @@ public interface MarsController {
 
     User getUser(int marsid);
 
+    List<User> getContacts(int marsid);
+
     Quote getQuote(int quoteId);
 
     List<Quote> allQuotes();

@@ -34,6 +34,10 @@ public class MarsH2Repository {
     private static final Logger LOGGER = Logger.getLogger(MarsH2Repository.class.getName());
     private static final String SQL_INSERT_USER = "insert into user(marsid, name) values (?,?)";
     private static final String SQL_GET_USER = "select * from user where marsid = ?";
+    private static final String SQL_GET_CONTACTID = "insert into marsidcontactid (marsid) values(?)";
+    private static final String SQL_GET_CONTACTS = "";
+    private static final String SQL_INSERT_CONTACT = "";
+    private static final String SQL_DELETE_CONTACT = "";
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -78,7 +82,7 @@ public class MarsH2Repository {
 
             try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
                 if(generatedKeys.next()){
-                    currentuser.setContactid(generatedKeys.getInt(2));
+                    currentuser.setContactid(getContactid(currentuser.getMarsid()));
                     return user;
                 }else{
                     throw new SQLException("Creating user failed, no row affected");
@@ -89,6 +93,27 @@ public class MarsH2Repository {
             LOGGER.log(Level.SEVERE, "Failed to create user.", ex);
             throw new RepositoryException("Could not get user");
         }
+    }
+
+    private int getContactid(int marsid){
+        int res = 12;
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_GET_CONTACTID, Statement.RETURN_GENERATED_KEYS)
+        ){
+            stmnt.setInt(1,marsid);
+            stmnt.executeUpdate();
+            try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    System.out.println("here");
+                    return generatedKeys.getInt("contactid");
+                }
+            }
+        }catch(SQLException EX){
+            LOGGER.log(Level.SEVERE,"test",EX);
+            throw new RepositoryException("could not ");
+        }
+        return res;
     }
 
     public User getUser(int marsid){
@@ -109,6 +134,19 @@ public class MarsH2Repository {
             LOGGER.log(Level.SEVERE,"Failed to get user", ex);
             throw new RepositoryException("Could not get user.");
         }
+    }
+
+    public List<User> getContacts(int marsid){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement("");
+        ){
+
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get contacts");
+            throw new RepositoryException("Could not get contacts");
+        }
+        return null;
     }
 
     public Quote getQuote(int id) {

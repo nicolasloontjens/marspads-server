@@ -83,6 +83,11 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
+    public List<User> getContacts(int marsid){
+        List<User> contacts = Repositories.getH2Repo().getContacts(marsid);
+    }
+
+    @Override
     public Quote getQuote(int quoteId) {
         Quote quote = Repositories.getH2Repo().getQuote(quoteId);
         if (null == quote)
