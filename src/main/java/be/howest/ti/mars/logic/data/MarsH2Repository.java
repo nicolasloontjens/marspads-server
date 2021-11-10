@@ -32,8 +32,8 @@ To make this class useful, please complete it with the topics seen in the module
  */
 public class MarsH2Repository {
     private static final Logger LOGGER = Logger.getLogger(MarsH2Repository.class.getName());
-    private static final String SQL_INSERT_USER = "insert into users(marsid, name) values (?,?)";
-    private static final String SQL_GET_USER = "select * from users where marsid = ?";
+    private static final String SQL_INSERT_USER = "insert into user(marsid, name) values (?,?)";
+    private static final String SQL_GET_USER = "select * from user where marsid = ?";
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
