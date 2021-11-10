@@ -16,6 +16,7 @@ public class Request {
     private static final Logger LOGGER = Logger.getLogger(Request.class.getName());
     public static final String SPEC_QUOTE_ID = "quoteId";
     public static final String SPEC_MARS_ID = "mid";
+    public static final String SPEC_CONTACT_ID = "contactid";
     public static final String SPEC_QUOTE = "quote";
     private final RequestParameters params;
 
@@ -33,6 +34,10 @@ public class Request {
 
     public int getMarsId(){
         return params.pathParameter(SPEC_MARS_ID).getInteger();
+    }
+
+    public int getContactId(){
+        return params.pathParameter(SPEC_CONTACT_ID).getInteger();
     }
 
     public String getQuote() {

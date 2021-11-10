@@ -12,17 +12,3 @@ create table user
     name    varchar(255) not null,
     contactid int auto_increment not null
 );
-
-drop table if exists marsidcontactid;
-create table marsidcontactid
-(
-    marsid int,
-    contactid int auto_increment not null
-);
-
-drop table if exists usercontacts
-create table usercontacts
-(
-    marsid int,
-    contactid int
-);

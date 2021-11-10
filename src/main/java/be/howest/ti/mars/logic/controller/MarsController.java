@@ -13,6 +13,8 @@ public interface MarsController {
 
     List<User> getContacts(int marsid);
 
+    boolean addContact(int marsid, int contactid);
+
     Quote getQuote(int quoteId);
 
     List<Quote> allQuotes();

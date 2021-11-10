@@ -36,7 +36,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_USER = "select * from user where marsid = ?";
     private static final String SQL_GET_CONTACTID = "insert into marsidcontactid (marsid) values(?)";
     private static final String SQL_GET_CONTACTS = "";
-    private static final String SQL_INSERT_CONTACT = "";
+    private static final String SQL_INSERT_CONTACT = "insert into usercontacts (marsid, contactid) values(?,?)";
     private static final String SQL_DELETE_CONTACT = "";
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
@@ -105,13 +105,12 @@ public class MarsH2Repository {
             stmnt.executeUpdate();
             try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
                 if(generatedKeys.next()){
-                    System.out.println("here");
                     return generatedKeys.getInt("contactid");
                 }
             }
         }catch(SQLException EX){
-            LOGGER.log(Level.SEVERE,"test",EX);
-            throw new RepositoryException("could not ");
+            LOGGER.log(Level.SEVERE,"Could not add new users contactid",EX);
+            throw new RepositoryException("Could not add user");
         }
         return res;
     }
@@ -147,6 +146,24 @@ public class MarsH2Repository {
             throw new RepositoryException("Could not get contacts");
         }
         return null;
+    }
+
+    public boolean addContact(int marsid, int contactid){
+        try(
+             Connection con = getConnection();
+             PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CONTACT);
+        ){
+            stmnt.setInt(1, marsid);
+            stmnt.setInt(2,contactid);
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Adding contact failed, no rows affected.");
+            }
+            return true;
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to add contact to contacts");
+            throw new RepositoryException("Could not add contact to contacts");
+        }
     }
 
     public Quote getQuote(int id) {

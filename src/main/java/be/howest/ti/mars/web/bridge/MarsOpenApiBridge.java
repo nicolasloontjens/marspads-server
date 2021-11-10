@@ -53,7 +53,13 @@ public class MarsOpenApiBridge {
     }
 
     public void addContact(RoutingContext ctx){
-
+        boolean res = controller.addContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
+        if(res){
+            Response.sendEmptyResponse(ctx,201);
+        }
+        else{
+            Response.sendEmptyResponse(ctx, 400);
+        }
     }
 
     public void deleteContact(RoutingContext ctx){
@@ -121,6 +127,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: getContacts");
         routerBuilder.operation("getContacts").handler(this::getContacts);
+
+        LOGGER.log(Level.INFO, "Installing handler for: addContact");
+        routerBuilder.operation("addContact").handler(this::addContact);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);

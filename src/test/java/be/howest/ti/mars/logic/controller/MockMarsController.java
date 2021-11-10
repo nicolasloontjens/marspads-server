@@ -25,6 +25,16 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
+    public List<User> getContacts(int marsid) {
+        return null;
+    }
+
+    @Override
+    public boolean addContact(int marsid, int contactid) {
+        return false;
+    }
+
+    @Override
     public Quote getQuote(int quoteId) {
         return new Quote(quoteId, SOME_QUOTE);
     }
