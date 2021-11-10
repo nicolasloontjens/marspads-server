@@ -50,6 +50,7 @@ public class MarsOpenApiBridge {
 
     public void getContacts(RoutingContext ctx){
         List<User> contacts = controller.getContacts(Request.from(ctx).getMarsId());
+        Response.sendContacts(ctx, contacts);
     }
 
     public void addContact(RoutingContext ctx){

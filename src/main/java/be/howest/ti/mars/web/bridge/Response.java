@@ -22,6 +22,10 @@ public class Response {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(user));
     }
 
+    public static void sendContacts(RoutingContext ctx, List<User> contacts){
+        sendJsonResponse(ctx, 200,new JsonArray(contacts));
+    }
+
     public static void sendQuote(RoutingContext ctx, Quote quote) {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
     }

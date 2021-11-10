@@ -34,10 +34,12 @@ public class MarsH2Repository {
     private static final Logger LOGGER = Logger.getLogger(MarsH2Repository.class.getName());
     private static final String SQL_INSERT_USER = "insert into user(marsid, name) values (?,?)";
     private static final String SQL_GET_USER = "select * from user where marsid = ?";
-    private static final String SQL_GET_CONTACTID = "insert into marsidcontactid (marsid) values(?)";
-    private static final String SQL_GET_CONTACTS = "";
+    private static final String SQL_SET_CONTACTID = "insert into marsidcontactid (marsid) values(?)";
+    private static final String SQL_GET_CONTACTID = "select contactid from marsidcontactid where marsid = ?";
+    private static final String SQL_GET_CONTACTS_MARSID = "select marsid, contactid from marsidcontactid m where contactid in (select us.contactid from user u left join usercontacts us on u.marsid = us.marsid where u.marsid = ?)";
     private static final String SQL_INSERT_CONTACT = "insert into usercontacts (marsid, contactid) values(?,?)";
     private static final String SQL_DELETE_CONTACT = "";
+
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -82,7 +84,7 @@ public class MarsH2Repository {
 
             try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
                 if(generatedKeys.next()){
-                    currentuser.setContactid(getContactid(currentuser.getMarsid()));
+                    currentuser.setContactid(setContactid(currentuser.getMarsid()));
                     return user;
                 }else{
                     throw new SQLException("Creating user failed, no row affected");
@@ -95,11 +97,11 @@ public class MarsH2Repository {
         }
     }
 
-    private int getContactid(int marsid){
+    private int setContactid(int marsid){
         int res = 12;
         try(
                 Connection con = getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_GET_CONTACTID, Statement.RETURN_GENERATED_KEYS)
+                PreparedStatement stmnt = con.prepareStatement(SQL_SET_CONTACTID, Statement.RETURN_GENERATED_KEYS)
         ){
             stmnt.setInt(1,marsid);
             stmnt.executeUpdate();
@@ -108,11 +110,32 @@ public class MarsH2Repository {
                     return generatedKeys.getInt("contactid");
                 }
             }
-        }catch(SQLException EX){
-            LOGGER.log(Level.SEVERE,"Could not add new users contactid",EX);
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Could not add new users contactid",ex);
             throw new RepositoryException("Could not add user");
         }
         return res;
+    }
+
+    private int getContactid(int marsid){
+        //get contactid from specific user
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_GET_CONTACTID);
+        ){
+            stmnt.setInt(1,marsid);
+            try(ResultSet rs = stmnt.executeQuery()){
+                if(rs.next()){
+                    return rs.getInt(1);
+                }
+                else{
+                    throw new SQLException("Could not get contactid");
+                }
+            }
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get contactid", ex);
+            throw new RepositoryException("Could not get contactid.");
+        }
     }
 
     public User getUser(int marsid){
@@ -123,7 +146,10 @@ public class MarsH2Repository {
             stmnt.setInt(1,marsid);
             try(ResultSet rs = stmnt.executeQuery()){
                 if(rs.next()){
-                    return new User(rs.getInt("marsid"),rs.getString("name"),rs.getInt("contactid"));
+                    int mid = rs.getInt("marsid");
+                    String name = rs.getString("name");
+                    int contactid = getContactid(mid);
+                    return new User(mid,name,contactid);
                 }
                 else{
                     return null;
@@ -138,14 +164,20 @@ public class MarsH2Repository {
     public List<User> getContacts(int marsid){
         try(
                 Connection con = getConnection();
-                PreparedStatement stmnt = con.prepareStatement("");
+                PreparedStatement stmnt = con.prepareStatement(SQL_GET_CONTACTS_MARSID);
         ){
-
+            stmnt.setInt(1,marsid);
+            ResultSet rs = stmnt.executeQuery();
+            List<User> contacts = new ArrayList<>();
+            while(rs.next()){
+                //we retrieve the contacts their marsid and contactid, then add it to the array and call the getuser function with their current marsid to show their name
+                contacts.add(new User(getUser(rs.getInt(1)).getName(),rs.getInt(2)));
+            }
+            return contacts;
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to get contacts");
             throw new RepositoryException("Could not get contacts");
         }
-        return null;
     }
 
     public boolean addContact(int marsid, int contactid){

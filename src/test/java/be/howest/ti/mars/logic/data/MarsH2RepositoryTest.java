@@ -39,6 +39,23 @@ class MarsH2RepositoryTest {
     }
 
     @Test
+    void getUser(){
+        User newuser = new User(1,"tester",-1);
+        Repositories.getH2Repo().createUser(newuser);
+        Assertions.assertEquals(Repositories.getH2Repo().getUser(1).getName(), newuser.getName());
+    }
+
+    @Test
+    void addContact(){
+
+    }
+
+    @Test
+    void getContacts(){
+
+    }
+
+    @Test
     void getQuote() {
         // Arrange
         int id = 1;

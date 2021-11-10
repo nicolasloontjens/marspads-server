@@ -17,6 +17,12 @@ public class User {
         this.contactid = -1;
     }
 
+    public User(String name, int contactid){
+        this.name = name;
+        this.contactid = contactid;
+        this.marsid = -1;
+    }
+
     public String getName() {
         return name;
     }

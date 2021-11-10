@@ -9,8 +9,7 @@ drop table if exists user;
 create table user
 (
     marsid  int primary key not null,
-    name    varchar(255) not null,
-    contactid int auto_increment not null
+    name    varchar(255) not null
 );
 
 drop table if exists marsidcontactid;
