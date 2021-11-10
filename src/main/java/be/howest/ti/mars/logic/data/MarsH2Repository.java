@@ -38,7 +38,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_CONTACTID = "select contactid from marsidcontactid where marsid = ?";
     private static final String SQL_GET_CONTACTS_MARSID = "select marsid, contactid from marsidcontactid m where contactid in (select us.contactid from user u left join usercontacts us on u.marsid = us.marsid where u.marsid = ?)";
     private static final String SQL_INSERT_CONTACT = "insert into usercontacts (marsid, contactid) values(?,?)";
-    private static final String SQL_DELETE_CONTACT = "";
+    private static final String SQL_DELETE_CONTACT = "delete from usercontacts where marsid = ? and contactid = ?";
 
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
@@ -196,6 +196,21 @@ public class MarsH2Repository {
             LOGGER.log(Level.SEVERE,"Failed to add contact to contacts");
             throw new RepositoryException("Could not add contact to contacts");
         }
+    }
+
+    public boolean deleteContact(int marsid, int contactid){
+        try(
+            Connection con = getConnection();
+            PreparedStatement stmnt = con.prepareStatement(SQL_DELETE_CONTACT);
+        ){
+            stmnt.setInt(1, marsid);
+            stmnt.setInt(2,contactid);
+            stmnt.execute();
+        }catch(SQLException ex){
+            LOGGER.log(Level.INFO, "Could not remove contact from contacts", ex);
+            throw new RepositoryException("Could not remove the contact from contacts");
+        }
+        return true;
     }
 
     public Quote getQuote(int id) {

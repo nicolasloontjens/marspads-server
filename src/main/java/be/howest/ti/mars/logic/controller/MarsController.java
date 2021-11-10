@@ -15,6 +15,8 @@ public interface MarsController {
 
     boolean addContact(int marsid, int contactid);
 
+    boolean deleteContact(int marsid, int contactid);
+
     Quote getQuote(int quoteId);
 
     List<Quote> allQuotes();
