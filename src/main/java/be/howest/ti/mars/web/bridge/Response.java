@@ -22,6 +22,10 @@ public class Response {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(user));
     }
 
+    public static void sendContacts(RoutingContext ctx, List<User> contacts){
+        sendJsonResponse(ctx, 200,new JsonArray(contacts));
+    }
+
     public static void sendQuote(RoutingContext ctx, Quote quote) {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
     }
@@ -42,7 +46,7 @@ public class Response {
         sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
     }
 
-    private static void sendEmptyResponse(RoutingContext ctx, int statusCode) {
+    public static void sendEmptyResponse(RoutingContext ctx, int statusCode) {
         ctx.response()
                 .setStatusCode(statusCode)
                 .end();

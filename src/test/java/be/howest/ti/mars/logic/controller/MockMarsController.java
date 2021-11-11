@@ -2,26 +2,62 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
+import com.sun.tools.jconsole.JConsoleContext;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MockMarsController implements MarsController {
     private static final String SOME_QUOTE = "quote";
     private List<User> users = new ArrayList<>();
+    private Map<Integer, Integer> marsidcontacts = new HashMap<>();
 
     @Override
     public User createUser(int marsid){
-        User user = new User(1,"bob",234);
+        User user = new User(marsid,"bob",234);
         users.add(user);
         return user;
     }
 
     @Override public User getUser(int marsid){
-        users.add(new User(1,"Joe"));
+        users.add(new User(marsid,"Joe"));
         return users.get(0);
+    }
+
+    @Override
+    public List<User> getContacts(int marsid) {
+        List<User> contacts = new ArrayList<>();
+        System.out.println(marsidcontacts.values());
+        for(Integer i : marsidcontacts.values()){
+            System.out.println(i);
+            if(marsidcontacts.get(marsid) == i){
+                contacts.add(new User("john",i));
+            }
+        }
+        return contacts;
+    }
+
+    @Override
+    public boolean addContact(int marsid, int contactid) {
+        System.out.println(marsid + contactid);
+        if(marsidcontacts.containsKey(marsid)){
+            if(marsidcontacts.get(marsid) == contactid){
+                return false;
+            }
+        }
+        marsidcontacts.put(marsid, contactid);
+        return true;
+    }
+
+    @Override
+    public boolean deleteContact(int marsid, int contactid) {
+        return false;
     }
 
     @Override

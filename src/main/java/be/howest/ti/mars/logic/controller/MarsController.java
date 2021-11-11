@@ -11,6 +11,12 @@ public interface MarsController {
 
     User getUser(int marsid);
 
+    List<User> getContacts(int marsid);
+
+    boolean addContact(int marsid, int contactid);
+
+    boolean deleteContact(int marsid, int contactid);
+
     Quote getQuote(int quoteId);
 
     List<Quote> allQuotes();

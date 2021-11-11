@@ -4,6 +4,7 @@ import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
+import be.howest.ti.mars.logic.exceptions.RepositoryException;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +49,72 @@ class DefaultMarsControllerTest {
     }
 
     @Test
+    void createUserError(){
+        MarsController marsController = new DefaultMarsController();
+
+        marsController.createUser(1);
+        assertThrows(RepositoryException.class,() -> {
+            marsController.createUser(1);
+        });
+    }
+
+    @Test
+    void getUserError(){
+        MarsController marsController = new DefaultMarsController();
+
+        assertThrows(MarsResourceNotFoundException.class, () -> {
+            marsController.getUser(1);
+        });
+    }
+
+    @Test
     void getUser(){
         MarsController marsController = new DefaultMarsController();
         marsController.createUser(1);
         User user = marsController.getUser(1);
         assertEquals(1, user.getMarsid());
     }
+
+    @Test
+    void getContacts(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        assertEquals(0,marsController.getContacts(1).size());
+    }
+
+    @Test
+    void addContact(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        marsController.addContact(1,2);
+        assertEquals(1,marsController.getContacts(1).size());
+    }
+
+    @Test
+    void addContactErrorTest(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        marsController.addContact(1,2);
+        assertThrows(RepositoryException.class,() -> {
+            marsController.addContact(1,2);
+        });
+
+    }
+
+    @Test
+    void deleteContact(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        marsController.addContact(1,2);
+        assertEquals(1,marsController.getContacts(1).size());
+        marsController.deleteContact(1,2);
+        assertEquals(0,marsController.getContacts(1).size());
+    }
+
 
     @Test
     void getQuote() {

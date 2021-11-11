@@ -48,6 +48,27 @@ public class MarsOpenApiBridge {
         Response.sendUser(ctx, user);
     }
 
+    public void getContacts(RoutingContext ctx){
+        List<User> contacts = controller.getContacts(Request.from(ctx).getMarsId());
+        Response.sendContacts(ctx, contacts);
+    }
+
+    public void addContact(RoutingContext ctx){
+        boolean res = controller.addContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
+        if(res){
+            Response.sendEmptyResponse(ctx,201);
+        }
+        else{
+            Response.sendEmptyResponse(ctx, 400);
+        }
+    }
+
+    public void deleteContact(RoutingContext ctx){
+        boolean res = controller.deleteContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
+
+        Response.sendEmptyResponse(ctx, 201);
+    }
+
     public void getQuote(RoutingContext ctx) {
         Quote quote = controller.getQuote(Request.from(ctx).getQuoteId());
 
@@ -106,6 +127,15 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: getUser");
         routerBuilder.operation("getUser").handler(this::getUser);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getContacts");
+        routerBuilder.operation("getContacts").handler(this::getContacts);
+
+        LOGGER.log(Level.INFO, "Installing handler for: addContact");
+        routerBuilder.operation("addContact").handler(this::addContact);
+
+        LOGGER.log(Level.INFO, "Installing handler for: deleteContact");
+        routerBuilder.operation("deleteContact").handler(this::deleteContact);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);
