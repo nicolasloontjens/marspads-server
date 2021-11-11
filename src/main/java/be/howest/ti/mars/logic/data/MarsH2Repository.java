@@ -263,6 +263,7 @@ public class MarsH2Repository {
     }
 
     public List<ChatMessage> getMessages(int marsid, int chatid){
+        List<ChatMessage> chats = new ArrayList<>();
         try(
             Connection con = getConnection();
             PreparedStatement stmnt = con.prepareStatement(SQL_GET_PARTICIPATING_CHATTERS);
@@ -271,7 +272,6 @@ public class MarsH2Repository {
             stmnt.setInt(1,chatid);
             stmnt2.setInt(1,chatid);
             ResultSet rs = stmnt.executeQuery();
-            List<ChatMessage> chats = new ArrayList<>();
             if(rs.next()){
                 if(rs.getInt(1) == marsid || rs.getInt(2) == marsid) {
                     ResultSet rs2 = stmnt2.executeQuery();
@@ -285,11 +285,11 @@ public class MarsH2Repository {
             else{
                 throw new RepositoryException("This marsid is not in this chat");
             }
+            return chats;
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to get messages", ex);
             throw new RepositoryException("Could not retrieve messages");
         }
-        return null;
     }
 
     public void createChat(int marsiduser1, int marsiduser2){
