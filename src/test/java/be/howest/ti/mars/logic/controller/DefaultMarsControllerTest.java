@@ -55,6 +55,25 @@ class DefaultMarsControllerTest {
     }
 
     @Test
+    void getContacts(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        marsController.addContact(1,234);
+        assertEquals(0,marsController.getContacts(1).size());
+    }
+
+    @Test
+    void addContact(){
+
+    }
+
+    @Test
+    void deleteContact(){
+
+    }
+
+    @Test
     void getQuote() {
         // Arrange
         MarsController sut = new DefaultMarsController();
