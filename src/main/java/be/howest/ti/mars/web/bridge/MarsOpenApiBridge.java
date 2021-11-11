@@ -3,6 +3,7 @@ package be.howest.ti.mars.web.bridge;
 import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
 import be.howest.ti.mars.logic.domain.Chat;
+import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
@@ -72,6 +73,11 @@ public class MarsOpenApiBridge {
     public void getChatids(RoutingContext ctx){
         List<Chat> chats = controller.getChatids(Request.from(ctx).getMarsId());
         Response.sendChatids(ctx, chats);
+    }
+
+    public void getMessages(RoutingContext ctx){
+        List<ChatMessage> messages = controller.getMessages(Request.from(ctx).getMarsId(),Request.from(ctx).getChatid());
+        Response.sendMessages(ctx, messages);
     }
 
 
@@ -145,6 +151,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: getChatids");
         routerBuilder.operation("getChatids").handler(this::getChatids);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getMessages");
+        routerBuilder.operation("getMessages").handler(this::getMessages);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);

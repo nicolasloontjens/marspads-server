@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Chat;
+import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
@@ -79,7 +80,7 @@ public class DefaultMarsController implements MarsController {
         nameFaker.add("Thor");
         nameFaker.add("Lando");
         nameFaker.add("Alvin");
-        int randnr = rand.nextInt(5);
+        int randnr = rand.nextInt(25);
         return nameFaker.get(randnr);
     }
 
@@ -101,6 +102,11 @@ public class DefaultMarsController implements MarsController {
     @Override
     public List<Chat> getChatids(int marsid){
         return Repositories.getH2Repo().getChatids(marsid);
+    }
+
+    @Override
+    public List<ChatMessage> getMessages(int marsid, int chatid) {
+        return Repositories.getH2Repo().getMessages(marsid, chatid);
     }
 
     @Override

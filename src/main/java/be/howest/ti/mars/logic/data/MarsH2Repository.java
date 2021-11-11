@@ -1,6 +1,7 @@
 package be.howest.ti.mars.logic.data;
 
 import be.howest.ti.mars.logic.domain.Chat;
+import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
@@ -42,7 +43,8 @@ public class MarsH2Repository {
     private static final String SQL_DELETE_CONTACT = "delete from usercontacts where marsid = ? and contactid = ?";
     private static final String SQL_GET_CHATIDS1 = "select chatid, marsid1 from chats where marsid2 = ?";
     private static final String SQL_GET_CHATIDS2 = "select chatid, marsid2 from chats where marsid1 = ?";
-
+    private static final String SQL_GET_MESSAGES = "select * from chatmessages where chatid = ?";
+    private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
 
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
@@ -255,6 +257,36 @@ public class MarsH2Repository {
             LOGGER.log(Level.SEVERE,"Failed to get chatids");
             throw new RepositoryException("Could not retrieve chatids");
         }
+    }
+
+    public List<ChatMessage> getMessages(int marsid, int chatid){
+        try(
+            Connection con = getConnection();
+            PreparedStatement stmnt = con.prepareStatement(SQL_GET_PARTICIPATING_CHATTERS);
+            PreparedStatement stmnt2 = con.prepareStatement(SQL_GET_MESSAGES);
+        ){
+            stmnt.setInt(1,chatid);
+            stmnt2.setInt(1,chatid);
+            ResultSet rs = stmnt.executeQuery();
+            List<ChatMessage> chats = new ArrayList<>();
+            if(rs.next()){
+                if(rs.getInt(1) == marsid || rs.getInt(2) == marsid) {
+                    ResultSet rs2 = stmnt2.executeQuery();
+                    while(rs2.next()){
+                        int currusermid = rs2.getInt(2);
+                        chats.add(new ChatMessage(chatid, getUser(currusermid).getName(),rs2.getString(3),rs2.getString(4)));
+                    }
+                    return chats;
+                }
+            }
+            else{
+                throw new RepositoryException("This marsid is not in this chat");
+            }
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get messages", ex);
+            throw new RepositoryException("Could not retrieve messages");
+        }
+        return null;
     }
 
     public Quote getQuote(int id) {
