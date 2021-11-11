@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
+import com.sun.tools.jconsole.JConsoleContext;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
@@ -44,6 +45,7 @@ public class MockMarsController implements MarsController {
 
     @Override
     public boolean addContact(int marsid, int contactid) {
+        System.out.println(marsid + contactid);
         if(marsidcontacts.containsKey(marsid)){
             if(marsidcontacts.get(marsid) == contactid){
                 return false;
