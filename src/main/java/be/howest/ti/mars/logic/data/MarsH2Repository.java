@@ -1,5 +1,6 @@
 package be.howest.ti.mars.logic.data;
 
+import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
@@ -211,6 +212,10 @@ public class MarsH2Repository {
             throw new RepositoryException("Could not remove the contact from contacts");
         }
         return true;
+    }
+
+    public List<Chat> getChatids(int marsid){
+        return null;
     }
 
     public Quote getQuote(int id) {

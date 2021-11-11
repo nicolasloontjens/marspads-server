@@ -1,5 +1,6 @@
 package be.howest.ti.mars.logic.controller;
 
+import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import com.sun.tools.jconsole.JConsoleContext;
@@ -58,6 +59,11 @@ public class MockMarsController implements MarsController {
     @Override
     public boolean deleteContact(int marsid, int contactid) {
         return false;
+    }
+
+    @Override
+    public List<Chat> getChatids(int marsid){
+        return null;
     }
 
     @Override

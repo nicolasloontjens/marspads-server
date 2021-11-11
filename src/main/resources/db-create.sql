@@ -27,3 +27,20 @@ create table usercontacts
     contactid int not null,
     unique(marsid, contactid)
 );
+
+drop table if exists chatmessages;
+create table chatmessages
+(
+    chatid int not null,
+    marsid int not null,
+    content varchar(10000) not null,
+    time_sent timestamp not null
+);
+
+drop table if exists chats;
+create table chats
+(
+    chatid int not null primary key auto_increment,
+    marsid1 int not null,
+    marsid2 int not null
+);

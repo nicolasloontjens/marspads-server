@@ -2,6 +2,7 @@ package be.howest.ti.mars.web.bridge;
 
 import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
+import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
@@ -64,10 +65,14 @@ public class MarsOpenApiBridge {
     }
 
     public void deleteContact(RoutingContext ctx){
-        boolean res = controller.deleteContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
-
+        controller.deleteContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
         Response.sendEmptyResponse(ctx, 201);
     }
+
+    public void getChatids(RoutingContext ctx){
+        controller.getChatids(Request.from(ctx).getMarsId());
+    }
+
 
     public void getQuote(RoutingContext ctx) {
         Quote quote = controller.getQuote(Request.from(ctx).getQuoteId());
@@ -136,6 +141,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: deleteContact");
         routerBuilder.operation("deleteContact").handler(this::deleteContact);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getChatids");
+        routerBuilder.operation("getChatids").handler(this::getChatids);
 
         LOGGER.log(Level.INFO, "Installing handler for: getQuote");
         routerBuilder.operation("getQuote").handler(this::getQuote);

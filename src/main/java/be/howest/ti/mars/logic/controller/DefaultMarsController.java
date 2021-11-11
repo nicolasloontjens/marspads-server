@@ -1,6 +1,7 @@
 package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.data.Repositories;
+import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
@@ -95,6 +96,11 @@ public class DefaultMarsController implements MarsController {
     @Override
     public boolean deleteContact(int marsid, int contactid){
         return Repositories.getH2Repo().deleteContact(marsid, contactid);
+    }
+
+    @Override
+    public List<Chat> getChatids(int marsid){
+        return Repositories.getH2Repo().getChatids(marsid);
     }
 
     @Override

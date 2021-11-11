@@ -1,5 +1,6 @@
 package be.howest.ti.mars.logic.controller;
 
+import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.Future;
@@ -16,6 +17,8 @@ public interface MarsController {
     boolean addContact(int marsid, int contactid);
 
     boolean deleteContact(int marsid, int contactid);
+
+    List<Chat> getChatids(int marsid);
 
     Quote getQuote(int quoteId);
 
