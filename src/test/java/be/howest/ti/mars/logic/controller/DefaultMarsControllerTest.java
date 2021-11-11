@@ -115,6 +115,20 @@ class DefaultMarsControllerTest {
         assertEquals(0,marsController.getContacts(1).size());
     }
 
+    @Test
+    void getChatids(){
+
+    }
+
+    @Test
+    void getMessages(){
+        MarsController marsController = new DefaultMarsController();
+        marsController.createUser(1);
+        marsController.createUser(2);
+        marsController.addContact(1,2);
+
+    }
+
 
     @Test
     void getQuote() {

@@ -46,6 +46,9 @@ public class MarsH2Repository {
     private static final String SQL_GET_MESSAGES = "select * from chatmessages where chatid = ?";
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
 
+    private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
+    private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages values(?,?,?,?)";
+
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -287,6 +290,36 @@ public class MarsH2Repository {
             throw new RepositoryException("Could not retrieve messages");
         }
         return null;
+    }
+
+    public void createChat(int marsiduser1, int marsiduser2){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT);
+        ){
+            stmnt.setInt(1,marsiduser1);
+            stmnt.setInt(2,marsiduser2);
+            stmnt.executeUpdate();
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE, "Failed to add chat to database", ex);
+            throw new RepositoryException("Failed to add chat");
+        }
+    }
+
+    public void insertChatMessage(int chatid, int marsid, String content, String timestamp){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT_MESSAGE);
+        ){
+            stmnt.setInt(1,chatid);
+            stmnt.setInt(2,marsid);
+            stmnt.setString(3,content);
+            stmnt.setTimestamp(4, Timestamp.valueOf(timestamp));
+            stmnt.executeUpdate();
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to add message to the chat", ex);
+            throw new RepositoryException("Failed to add message");
+        }
     }
 
     public Quote getQuote(int id) {
