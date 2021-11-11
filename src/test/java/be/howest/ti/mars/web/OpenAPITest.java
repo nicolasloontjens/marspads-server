@@ -71,7 +71,7 @@ class OpenAPITest {
 
     @Test
     void createUser(final VertxTestContext testContext){
-        webClient.post(PORT,HOST, "/create/1").send()
+        webClient.post(PORT,HOST, "/api/create/1").send()
                 .onFailure(testContext::failNow)
                 .onSuccess(response -> testContext.verify(()->{
                     assertEquals(200, response.statusCode());
@@ -82,7 +82,7 @@ class OpenAPITest {
 
     @Test
     void getUser(final VertxTestContext testContext){
-        webClient.get(PORT,HOST,"/user/1").send()
+        webClient.get(PORT,HOST,"/api/user/1").send()
                 .onFailure(testContext::failNow)
                 .onSuccess(response -> testContext.verify(()->{
                     assertEquals(200, response.statusCode());
