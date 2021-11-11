@@ -70,7 +70,8 @@ public class MarsOpenApiBridge {
     }
 
     public void getChatids(RoutingContext ctx){
-        controller.getChatids(Request.from(ctx).getMarsId());
+        List<Chat> chats = controller.getChatids(Request.from(ctx).getMarsId());
+        Response.sendChatids(ctx, chats);
     }
 
 

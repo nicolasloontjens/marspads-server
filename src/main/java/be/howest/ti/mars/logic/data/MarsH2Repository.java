@@ -40,6 +40,9 @@ public class MarsH2Repository {
     private static final String SQL_GET_CONTACTS_MARSID = "select marsid, contactid from marsidcontactid m where contactid in (select us.contactid from user u left join usercontacts us on u.marsid = us.marsid where u.marsid = ?)";
     private static final String SQL_INSERT_CONTACT = "insert into usercontacts (marsid, contactid) values(?,?)";
     private static final String SQL_DELETE_CONTACT = "delete from usercontacts where marsid = ? and contactid = ?";
+    private static final String SQL_GET_CHATIDS1 = "select chatid, marsid1 from chats where marsid2 = ?";
+    private static final String SQL_GET_CHATIDS2 = "select chatid, marsid2 from chats where marsid1 = ?";
+
 
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
@@ -215,7 +218,43 @@ public class MarsH2Repository {
     }
 
     public List<Chat> getChatids(int marsid){
-        return null;
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt1 = con.prepareStatement(SQL_GET_CHATIDS1);
+                PreparedStatement stmnt2 = con.prepareStatement(SQL_GET_CHATIDS2);
+        ){
+            stmnt1.setInt(1,marsid);
+            stmnt2.setInt(1,marsid);
+            ResultSet rs1 = stmnt1.executeQuery();
+            ResultSet rs2 = stmnt2.executeQuery();
+            return handleGetChatids(rs1,rs2);
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get chatids", ex);
+            throw new RepositoryException("Could not retrieve chatids");
+        }
+    }
+
+    private List<Chat> handleGetChatids(ResultSet rs1, ResultSet rs2){
+        List<Chat> chats = new ArrayList<>();
+        try{
+            while(rs1.next()){
+                int chatid = rs1.getInt(1);
+                int currmarsid = rs1.getInt(2);
+                chats.add(new Chat(chatid,getUser(currmarsid).getName()));
+            }
+            while(rs2.next()){
+                int chatid = rs2.getInt(1);
+                int currmarsid = rs2.getInt(2);
+                String name = getUser(currmarsid).getName();
+                if(chats.stream().noneMatch(chat -> chat.getChatid() == chatid)){
+                    chats.add(new Chat(chatid, name));
+                }
+            }
+            return chats;
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get chatids");
+            throw new RepositoryException("Could not retrieve chatids");
+        }
     }
 
     public Quote getQuote(int id) {
