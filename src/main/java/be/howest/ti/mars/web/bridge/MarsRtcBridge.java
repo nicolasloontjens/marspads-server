@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import jdk.jfr.EventFactory;
 
 import java.util.Map;
 import java.util.Timer;
@@ -65,5 +66,8 @@ public class MarsRtcBridge {
 
     public void handleIncomingMessage(Message<JsonObject> msg){
         System.out.println(msg.body());
+        IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
+
+
     }
 }
