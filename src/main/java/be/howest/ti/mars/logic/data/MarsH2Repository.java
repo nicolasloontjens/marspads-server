@@ -1,5 +1,7 @@
 package be.howest.ti.mars.logic.data;
 
+import be.howest.ti.mars.logic.domain.Chat;
+import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
@@ -39,6 +41,13 @@ public class MarsH2Repository {
     private static final String SQL_GET_CONTACTS_MARSID = "select marsid, contactid from marsidcontactid m where contactid in (select us.contactid from user u left join usercontacts us on u.marsid = us.marsid where u.marsid = ?)";
     private static final String SQL_INSERT_CONTACT = "insert into usercontacts (marsid, contactid) values(?,?)";
     private static final String SQL_DELETE_CONTACT = "delete from usercontacts where marsid = ? and contactid = ?";
+    private static final String SQL_GET_CHATIDS1 = "select chatid, marsid1 from chats where marsid2 = ?";
+    private static final String SQL_GET_CHATIDS2 = "select chatid, marsid2 from chats where marsid1 = ?";
+    private static final String SQL_GET_MESSAGES = "select * from chatmessages where chatid = ?";
+    private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
+
+    private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
+    private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages values(?,?,?,?)";
 
 
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
@@ -97,8 +106,7 @@ public class MarsH2Repository {
         }
     }
 
-    private int setContactid(int marsid){
-        int res = 12;
+    public int setContactid(int marsid){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_SET_CONTACTID, Statement.RETURN_GENERATED_KEYS)
@@ -110,14 +118,14 @@ public class MarsH2Repository {
                     return generatedKeys.getInt("contactid");
                 }
             }
+            throw new RepositoryException("Could not add new users contactid");
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Could not add new users contactid",ex);
             throw new RepositoryException("Could not add user");
         }
-        return res;
     }
 
-    private int getContactid(int marsid){
+    public int getContactid(int marsid){
         //get contactid from specific user
         try(
                 Connection con = getConnection();
@@ -152,7 +160,7 @@ public class MarsH2Repository {
                     return new User(mid,name,contactid);
                 }
                 else{
-                    return null;
+                    throw new RepositoryException("Failed to get user");
                 }
             }
         }catch(SQLException ex){
@@ -211,6 +219,109 @@ public class MarsH2Repository {
             throw new RepositoryException("Could not remove the contact from contacts");
         }
         return true;
+    }
+
+    public List<Chat> getChatids(int marsid){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt1 = con.prepareStatement(SQL_GET_CHATIDS1);
+                PreparedStatement stmnt2 = con.prepareStatement(SQL_GET_CHATIDS2);
+        ){
+            stmnt1.setInt(1,marsid);
+            stmnt2.setInt(1,marsid);
+            ResultSet rs1 = stmnt1.executeQuery();
+            ResultSet rs2 = stmnt2.executeQuery();
+            return handleGetChatids(rs1,rs2);
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get chatids", ex);
+            throw new RepositoryException("Could not retrieve chatids");
+        }
+    }
+
+    private List<Chat> handleGetChatids(ResultSet rs1, ResultSet rs2){
+        List<Chat> chats = new ArrayList<>();
+        try{
+            while(rs1.next()){
+                int chatid = rs1.getInt(1);
+                int currmarsid = rs1.getInt(2);
+                chats.add(new Chat(chatid,getUser(currmarsid).getName()));
+            }
+            while(rs2.next()){
+                int chatid = rs2.getInt(1);
+                int currmarsid = rs2.getInt(2);
+                String name = getUser(currmarsid).getName();
+                if(chats.stream().noneMatch(chat -> chat.getChatid() == chatid)){
+                    chats.add(new Chat(chatid, name));
+                }
+            }
+            return chats;
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get chatids");
+            throw new RepositoryException("Could not retrieve chatids");
+        }
+    }
+
+    public List<ChatMessage> getMessages(int marsid, int chatid){
+        List<ChatMessage> chats = new ArrayList<>();
+        try(
+            Connection con = getConnection();
+            PreparedStatement stmnt = con.prepareStatement(SQL_GET_PARTICIPATING_CHATTERS);
+            PreparedStatement stmnt2 = con.prepareStatement(SQL_GET_MESSAGES);
+        ){
+            stmnt.setInt(1,chatid);
+            stmnt2.setInt(1,chatid);
+            ResultSet rs = stmnt.executeQuery();
+            if(rs.next() && rs.getInt(1) == marsid || rs.getInt(2) == marsid){
+                ResultSet rs2 = stmnt2.executeQuery();
+                while(rs2.next()){
+                    int currusermid = rs2.getInt(2);
+                    chats.add(new ChatMessage(chatid, getUser(currusermid).getName(),rs2.getString(3),rs2.getString(4)));
+                }
+                return chats;
+            }
+            throw new RepositoryException("This marsid is not in this chat");
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get messages", ex);
+            throw new RepositoryException("Could not retrieve messages");
+        }
+    }
+
+    public boolean createChat(int marsiduser1, int marsiduser2){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT);
+        ){
+            stmnt.setInt(1,marsiduser1);
+            stmnt.setInt(2,marsiduser2);
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Creating chat failed");
+            }
+            return true;
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE, "Failed to add chat to database", ex);
+            throw new RepositoryException("Failed to add chat");
+        }
+    }
+
+    public boolean insertChatMessage(int chatid, int marsid, String content, String timestamp){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT_MESSAGE);
+        ){
+            stmnt.setInt(1,chatid);
+            stmnt.setInt(2,marsid);
+            stmnt.setString(3,content);
+            stmnt.setTimestamp(4, Timestamp.valueOf(timestamp));
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Adding message failed");
+            }
+            return true;
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to add message to the chat", ex);
+            throw new RepositoryException("Failed to add message");
+        }
     }
 
     public Quote getQuote(int id) {

@@ -1,5 +1,7 @@
 package be.howest.ti.mars.web.bridge;
 
+import be.howest.ti.mars.logic.domain.Chat;
+import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.http.HttpHeaders;
@@ -24,6 +26,14 @@ public class Response {
 
     public static void sendContacts(RoutingContext ctx, List<User> contacts){
         sendJsonResponse(ctx, 200,new JsonArray(contacts));
+    }
+
+    public static void sendChatids(RoutingContext ctx, List<Chat> chats){
+        sendJsonResponse(ctx, 200, new JsonArray(chats));
+    }
+
+    public static void sendMessages(RoutingContext ctx, List<ChatMessage> messages){
+        sendJsonResponse(ctx, 200, new JsonArray(messages));
     }
 
     public static void sendQuote(RoutingContext ctx, Quote quote) {
