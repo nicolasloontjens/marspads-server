@@ -8,7 +8,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
@@ -56,7 +55,7 @@ public class WebServer extends AbstractVerticle {
                             .onSuccess(routerBuilder -> {
                                 LOGGER.log(Level.INFO, "API specification loaded: {0}",
                                         routerBuilder.getOpenAPI().getOpenAPI().getJsonObject("info").getString("version"));
-                                Repositories.configure(configuration.getJsonObject("db"), WebClient.create(vertx) );
+                                Repositories.configure(configuration.getJsonObject("db"));
 
                                 Router mainRouter = Router.router(vertx);
                                 mainRouter.route().handler(createCorsHandler());

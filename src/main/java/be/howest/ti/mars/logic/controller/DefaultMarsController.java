@@ -3,11 +3,7 @@ package be.howest.ti.mars.logic.controller;
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
-import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
-import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
-import io.vertx.core.Future;
-import org.apache.commons.lang3.StringUtils;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -28,27 +24,18 @@ import java.util.Random;
  * (please update these comments in the final version)
  */
 public class DefaultMarsController implements MarsController {
-    private static final String MSG_QUOTE_ID_UNKNOWN = "No quote with id: %d";
-    private Random rand = new SecureRandom();
+    private final Random rand = new SecureRandom();
 
     //create a user and put them in the database
     @Override
     public User createUser(int marsid){
         //create user without contactid, pass to h2repo and return user with contactid in database
-        User user = Repositories.getH2Repo().createUser(new User(marsid, getRandomName()));
-        if(user.getContactid() == -1){
-            throw new MarsResourceNotFoundException("Could not add user to the database");
-        }
-        return user;
+        return Repositories.getH2Repo().createUser(new User(marsid, getRandomName()));
     }
 
     @Override
     public User getUser(int marsid){
-        User user = Repositories.getH2Repo().getUser(marsid);
-        if(user == null){
-            throw new MarsResourceNotFoundException("Could not find a user with that marsid");
-        }
-        return user;
+        return Repositories.getH2Repo().getUser(marsid);
     }
 
     private String getRandomName(){
@@ -117,62 +104,5 @@ public class DefaultMarsController implements MarsController {
     @Override
     public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
         return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content, timestamp);
-    }
-
-
-    @Override
-    public Quote getQuote(int quoteId) {
-        Quote quote = Repositories.getH2Repo().getQuote(quoteId);
-        if (null == quote)
-            throw new MarsResourceNotFoundException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        return quote;
-    }
-
-    @Override
-    public List<Quote> allQuotes(){
-        return Repositories.getH2Repo().allQuotes();
-    }
-
-    @Override
-    public Quote createQuote(String quote) {
-        if (StringUtils.isBlank(quote))
-            throw new IllegalArgumentException("An empty quote is not allowed.");
-
-        return Repositories.getH2Repo().insertQuote(quote);
-    }
-
-    @Override
-    public Quote updateQuote(int quoteId, String quote) {
-        if (StringUtils.isBlank(quote))
-            throw new IllegalArgumentException("No quote provided!");
-
-        if (quoteId < 0)
-            throw new IllegalArgumentException("No valid quote ID provided");
-
-        if (null == Repositories.getH2Repo().getQuote(quoteId))
-            throw new MarsResourceNotFoundException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        return Repositories.getH2Repo().updateQuote(quoteId, quote);
-    }
-
-    @Override
-    public void deleteQuote(int quoteId) {
-        if (null == Repositories.getH2Repo().getQuote(quoteId))
-            throw new MarsResourceNotFoundException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        Repositories.getH2Repo().deleteQuote(quoteId);
-    }
-
-    /*
-    Example of how to consume an external api.
-    See the openapi bridge class for an example of how to handle the Future<String> object.
-     */
-    @Override
-    public Future<Quote> getRandomQuote() {
-        return Repositories
-                .getQuotesRepo()
-                .getRandomQuote()
-                .map(this::createQuote);
     }
 }

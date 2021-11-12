@@ -2,18 +2,12 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
-import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
-import com.sun.tools.jconsole.JConsoleContext;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MockMarsController implements MarsController {
     private static final String SOME_QUOTE = "quote";
@@ -80,39 +74,5 @@ public class MockMarsController implements MarsController {
     @Override
     public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
         return false;
-    }
-
-    @Override
-    public Quote getQuote(int quoteId) {
-        return new Quote(quoteId, SOME_QUOTE);
-    }
-
-    @Override
-    public List<Quote> allQuotes() {
-        List<Quote> quotes = new ArrayList<>();
-        quotes.add(new Quote(1,"an interesting quote"));
-        quotes.add(new Quote(2,"an even more interesting quote"));
-        return quotes;
-    }
-
-    @Override
-    public Quote createQuote(String quote) {
-        return new Quote(1, quote);
-    }
-
-    @Override
-    public Quote updateQuote(int quoteId, String quote) {
-        return new Quote(quoteId, quote);
-    }
-
-    @Override
-    public void deleteQuote(int quoteId) {
-    }
-
-    @Override
-    public Future<Quote> getRandomQuote() {
-        Promise<Quote> promise = Promise.promise();
-        promise.complete(new Quote(1, SOME_QUOTE));
-        return promise.future();
     }
 }
