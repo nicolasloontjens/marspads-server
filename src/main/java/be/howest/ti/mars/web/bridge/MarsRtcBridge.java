@@ -2,6 +2,7 @@ package be.howest.ti.mars.web.bridge;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
@@ -51,23 +52,18 @@ public class MarsRtcBridge {
         timer.schedule(task, 0, 30000);
     }
 
-    private void createSockJSHandler() {
-        final PermittedOptions permittedOptions = new PermittedOptions().setAddressRegex("events\\..+");
-        final SockJSBridgeOptions options = new SockJSBridgeOptions()
-                .addInboundPermitted(permittedOptions)
-                .addOutboundPermitted(permittedOptions);
+    public SockJSHandler createSockJSHandler(Vertx vertx) {
+        final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+        final PermittedOptions inbound = new PermittedOptions().setAddressRegex("events\\..+");
+        final PermittedOptions outbound = inbound;
+
+        final SockJSBridgeOptions options = new SockJSBridgeOptions().addInboundPermitted(inbound).addOutboundPermitted(outbound);
+
         sockJSHandler.bridge(options);
+        return sockJSHandler;
     }
 
-    public SockJSHandler getSockJSHandler(Vertx vertx) {
-        sockJSHandler = SockJSHandler.create(vertx);
-        eb = vertx.eventBus();
-        createSockJSHandler();
-
-        // This is for demo purposes only.
-        // Do not send messages in this getSockJSHandler function.
-        sendEventToClients();
-
-        return sockJSHandler;
+    public void handleIncomingMessage(Message<JsonObject> msg){
+        System.out.println(msg.body());
     }
 }
