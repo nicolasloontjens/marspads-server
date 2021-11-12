@@ -106,8 +106,7 @@ public class MarsH2Repository {
         }
     }
 
-    private int setContactid(int marsid){
-        int res = 12;
+    public int setContactid(int marsid){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_SET_CONTACTID, Statement.RETURN_GENERATED_KEYS)
@@ -119,14 +118,14 @@ public class MarsH2Repository {
                     return generatedKeys.getInt("contactid");
                 }
             }
+            throw new RepositoryException("Could not add new users contactid");
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Could not add new users contactid",ex);
             throw new RepositoryException("Could not add user");
         }
-        return res;
     }
 
-    private int getContactid(int marsid){
+    public int getContactid(int marsid){
         //get contactid from specific user
         try(
                 Connection con = getConnection();
@@ -161,7 +160,7 @@ public class MarsH2Repository {
                     return new User(mid,name,contactid);
                 }
                 else{
-                    return null;
+                    throw new RepositoryException("Failed to get user");
                 }
             }
         }catch(SQLException ex){
@@ -272,41 +271,40 @@ public class MarsH2Repository {
             stmnt.setInt(1,chatid);
             stmnt2.setInt(1,chatid);
             ResultSet rs = stmnt.executeQuery();
-            if(rs.next()){
-                if(rs.getInt(1) == marsid || rs.getInt(2) == marsid) {
-                    ResultSet rs2 = stmnt2.executeQuery();
-                    while(rs2.next()){
-                        int currusermid = rs2.getInt(2);
-                        chats.add(new ChatMessage(chatid, getUser(currusermid).getName(),rs2.getString(3),rs2.getString(4)));
-                    }
-                    return chats;
+            if(rs.next() && rs.getInt(1) == marsid || rs.getInt(2) == marsid){
+                ResultSet rs2 = stmnt2.executeQuery();
+                while(rs2.next()){
+                    int currusermid = rs2.getInt(2);
+                    chats.add(new ChatMessage(chatid, getUser(currusermid).getName(),rs2.getString(3),rs2.getString(4)));
                 }
+                return chats;
             }
-            else{
-                throw new RepositoryException("This marsid is not in this chat");
-            }
-            return chats;
+            throw new RepositoryException("This marsid is not in this chat");
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to get messages", ex);
             throw new RepositoryException("Could not retrieve messages");
         }
     }
 
-    public void createChat(int marsiduser1, int marsiduser2){
+    public boolean createChat(int marsiduser1, int marsiduser2){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT);
         ){
             stmnt.setInt(1,marsiduser1);
             stmnt.setInt(2,marsiduser2);
-            stmnt.executeUpdate();
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Creating chat failed");
+            }
+            return true;
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE, "Failed to add chat to database", ex);
             throw new RepositoryException("Failed to add chat");
         }
     }
 
-    public void insertChatMessage(int chatid, int marsid, String content, String timestamp){
+    public boolean insertChatMessage(int chatid, int marsid, String content, String timestamp){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT_MESSAGE);
@@ -315,7 +313,11 @@ public class MarsH2Repository {
             stmnt.setInt(2,marsid);
             stmnt.setString(3,content);
             stmnt.setTimestamp(4, Timestamp.valueOf(timestamp));
-            stmnt.executeUpdate();
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Adding message failed");
+            }
+            return true;
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to add message to the chat", ex);
             throw new RepositoryException("Failed to add message");

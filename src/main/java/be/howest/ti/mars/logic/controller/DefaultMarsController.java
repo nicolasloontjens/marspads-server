@@ -110,6 +110,17 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
+    public boolean addChatid(int marsid1, int marsid2) {
+        return Repositories.getH2Repo().createChat(marsid1, marsid2);
+    }
+
+    @Override
+    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
+        return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content, timestamp);
+    }
+
+
+    @Override
     public Quote getQuote(int quoteId) {
         Quote quote = Repositories.getH2Repo().getQuote(quoteId);
         if (null == quote)

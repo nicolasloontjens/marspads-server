@@ -73,6 +73,16 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
+    public boolean addChatid(int marsid1, int marsid2) {
+        return false;
+    }
+
+    @Override
+    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
+        return false;
+    }
+
+    @Override
     public Quote getQuote(int quoteId) {
         return new Quote(quoteId, SOME_QUOTE);
     }
