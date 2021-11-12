@@ -2,7 +2,6 @@ package be.howest.ti.mars.web.bridge;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
-import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.Json;
@@ -34,26 +33,6 @@ public class Response {
 
     public static void sendMessages(RoutingContext ctx, List<ChatMessage> messages){
         sendJsonResponse(ctx, 200, new JsonArray(messages));
-    }
-
-    public static void sendQuote(RoutingContext ctx, Quote quote) {
-        sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
-    }
-
-    public static void sendAllQuotes(RoutingContext ctx, List<Quote> quotes){
-        sendJsonResponse(ctx,200, new JsonArray(quotes));
-    }
-
-    public static void sendQuoteCreated(RoutingContext ctx, Quote quote) {
-        sendJsonResponse(ctx, 201, JsonObject.mapFrom(quote));
-    }
-
-    public static void sendQuoteDeleted(RoutingContext ctx) {
-        sendEmptyResponse(ctx, 204);
-    }
-
-    public static void sendQuoteUpdated(RoutingContext ctx, Quote quote) {
-        sendJsonResponse(ctx, 200, JsonObject.mapFrom(quote));
     }
 
     public static void sendEmptyResponse(RoutingContext ctx, int statusCode) {

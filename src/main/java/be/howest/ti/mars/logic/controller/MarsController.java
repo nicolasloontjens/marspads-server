@@ -2,9 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
-import be.howest.ti.mars.logic.domain.Quote;
 import be.howest.ti.mars.logic.domain.User;
-import io.vertx.core.Future;
 
 import java.util.List;
 
@@ -26,16 +24,4 @@ public interface MarsController {
     boolean addChatid(int marsid1, int marsid2);
 
     boolean addChatMessage(int chatid, int marsid, String content, String timestamp);
-
-    Quote getQuote(int quoteId);
-
-    List<Quote> allQuotes();
-
-    Quote createQuote(String quote);
-
-    Quote updateQuote(int quoteId, String quote);
-
-    void deleteQuote(int quoteId);
-
-    Future<Quote> getRandomQuote();
 }

@@ -14,7 +14,6 @@ import java.util.logging.Logger;
  */
 public class Request {
     private static final Logger LOGGER = Logger.getLogger(Request.class.getName());
-    public static final String SPEC_QUOTE_ID = "quoteId";
     public static final String SPEC_MARS_ID = "mid";
     public static final String SPEC_CONTACT_ID = "contactid";
     public static final String SPEC_CHAT_ID = "chatid";
@@ -29,9 +28,6 @@ public class Request {
         this.params = ctx.get(ValidationHandler.REQUEST_CONTEXT_KEY);
     }
 
-    public int getQuoteId() {
-        return params.pathParameter(SPEC_QUOTE_ID).getInteger();
-    }
 
     public int getMarsId(){
         return params.pathParameter(SPEC_MARS_ID).getInteger();

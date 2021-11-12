@@ -16,11 +16,6 @@ class RepositoriesTest {
     }
 
     @Test
-    void getQuoteRepoWithoutConfiguration() {
-        assertThrows(RepositoryException.class, Repositories::getQuotesRepo);
-    }
-
-    @Test
     void getH2RepoWithoutConfiguration() {
         assertThrows(RepositoryException.class, Repositories::getH2Repo);
     }
