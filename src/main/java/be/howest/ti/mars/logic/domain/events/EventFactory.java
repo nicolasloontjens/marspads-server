@@ -21,7 +21,6 @@ public class EventFactory {
             case PRIVATEMESSAGE:
                 event = new PrivateMessageEvent(marsid,json.getString("message"),json.getString("chatid"));
                 break;
-
         }
         return event;
     }
@@ -30,6 +29,9 @@ public class EventFactory {
         return new BroadcastEvent(msg);
     }
 
+    public MulticastEvent createMulticastEvent(String msg, int chatid){
+        return new MulticastEvent(msg, chatid);
+    }
 
 
 }

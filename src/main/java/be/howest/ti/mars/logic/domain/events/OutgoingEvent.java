@@ -12,4 +12,6 @@ public class OutgoingEvent extends Event{
     public String getMessage() {
         return message;
     }
+
+
 }
