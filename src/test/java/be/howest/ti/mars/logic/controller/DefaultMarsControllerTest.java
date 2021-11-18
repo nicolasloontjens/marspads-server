@@ -135,7 +135,7 @@ class DefaultMarsControllerTest {
         MarsController marsController = createUserAndContacts();
         marsController.createUser(3);
         marsController.addChatid(1,2);
-        marsController.addChatMessage(1,1,"Test content","2021-11-11 08:55:00");
+        marsController.addChatMessage(1,1,"Test content");
         ChatMessage chatMessage = new ChatMessage(1,"Test","Test content", "2021-11-11 08:55:01");
         List<ChatMessage> messagesfromcontroller = marsController.getMessages(1,1);
         assertEquals(1,messagesfromcontroller.size());

@@ -102,7 +102,7 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
-        return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content, timestamp);
+    public boolean addChatMessage(int chatid, int marsid, String content) {
+        return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content);
     }
 }

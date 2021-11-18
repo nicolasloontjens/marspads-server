@@ -34,7 +34,7 @@ create table chatmessages
     chatid int not null,
     marsid int not null,
     content varchar(10000) not null,
-    time_sent timestamp not null
+    time_sent timestamp not null default CURRENT_TIMESTAMP
 );
 
 drop table if exists chats;

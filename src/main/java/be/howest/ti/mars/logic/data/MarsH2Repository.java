@@ -45,7 +45,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_MESSAGES = "select * from chatmessages where chatid = ?";
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
-    private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages values(?,?,?,?)";
+    private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
 
 
     private final Server dbWebConsole;
@@ -297,7 +297,7 @@ public class MarsH2Repository {
         }
     }
 
-    public boolean insertChatMessage(int chatid, int marsid, String content, String timestamp){
+    public boolean insertChatMessage(int chatid, int marsid, String content){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT_MESSAGE);
@@ -305,7 +305,6 @@ public class MarsH2Repository {
             stmnt.setInt(1,chatid);
             stmnt.setInt(2,marsid);
             stmnt.setString(3,content);
-            stmnt.setTimestamp(4, Timestamp.valueOf(timestamp));
             int affectedrows = stmnt.executeUpdate();
             if(affectedrows == 0){
                 throw new SQLException("Adding message failed");

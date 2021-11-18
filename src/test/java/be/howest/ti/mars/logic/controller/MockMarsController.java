@@ -71,7 +71,7 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
+    public boolean addChatMessage(int chatid, int marsid, String content) {
         return false;
     }
 }

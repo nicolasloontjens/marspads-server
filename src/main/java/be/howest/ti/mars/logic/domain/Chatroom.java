@@ -22,12 +22,19 @@ public class Chatroom {
     }
 
     private static OutgoingEvent handlePublicMessageEvent(MessageEvent e){
-        String outgoingMessage = String.format("<p>%s: %s</p>",controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
+        String outgoingMessage = String.format("%s: %s",controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
         return EventFactory.getInstance().createBroadcastEvent(outgoingMessage);
     }
 
     private static OutgoingEvent handlePrivateMessageEvent(PrivateMessageEvent e){
-        String outgoingMessage = String.format("<p>%s: %s", controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
+        String outgoingMessage = String.format("%s: %s", controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
+        storeMessageInDatabase(e);
         return EventFactory.getInstance().createMulticastEvent(outgoingMessage, Integer.parseInt(e.getChatid()));
+    }
+
+    private static void storeMessageInDatabase(PrivateMessageEvent e){
+        int chatid = Integer.parseInt(e.getChatid());
+        int marsid = Integer.parseInt(e.getMarsid());
+        String messageContents = e.getMessage();
     }
 }
