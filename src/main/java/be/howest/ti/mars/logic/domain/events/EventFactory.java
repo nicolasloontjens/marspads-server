@@ -9,8 +9,21 @@ public class EventFactory {
         return instance;
     }
 
-    public IncomingEvent createIncomingEvent(JsonObject json){
 
+    public IncomingEvent createIncomingEvent(JsonObject json){
+        EventType eventType = EventType.fromString(json.getString("type"));
+        String marsid = json.getString("marsid");
+        IncomingEvent event = new DiscardEvent(marsid);
+        switch(eventType){
+            case MESSAGE:
+                event = new MessageEvent(marsid, json.getString("message"));
+                break;
+            case PRIVATEMESSAGE:
+                event = new PrivateMessageEvent(marsid,json.getString("message"),json.getString("chatid"));
+                break;
+
+        }
+        return event;
     }
 
 

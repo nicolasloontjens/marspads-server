@@ -4,10 +4,8 @@ public enum EventType {
 
     UNICAST("unicast"),
     BROADCAST("broadcast"),
-    MULTICAST("multicast"),
     MESSAGE("message"),
     DISCARD("discard"),
-    JOIN("join"),
     PRIVATEMESSAGE("privateMessage");
 
     private final String type;

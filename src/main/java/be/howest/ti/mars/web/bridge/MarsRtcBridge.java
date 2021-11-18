@@ -1,5 +1,7 @@
 package be.howest.ti.mars.web.bridge;
 
+import be.howest.ti.mars.logic.domain.events.EventFactory;
+import be.howest.ti.mars.logic.domain.events.IncomingEvent;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -7,7 +9,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import jdk.jfr.EventFactory;
 
 import java.util.Map;
 import java.util.Timer;
@@ -31,27 +32,7 @@ import java.util.TimerTask;
  * <p>
  */
 public class MarsRtcBridge {
-    private static final String EB_EVENT_TO_MARTIANS = "events.to.martians";
-    private SockJSHandler sockJSHandler;
     private EventBus eb;
-
-    /**
-     * Example function to put a message on the event bus every 10 seconds.
-     * The timer logic is only there to simulate a repetitive stream of data as an example.
-     * Please remove this timer logic or move it to an appropriate place.
-     * Please call the controller to get some business logic data. Afterwords publish the result to the client.
-     */
-    public void sendEventToClients() {
-        final Timer timer = new Timer();
-
-        TimerTask task = new TimerTask() {
-            public void run() {
-                eb.publish(EB_EVENT_TO_MARTIANS, new JsonObject(Map.of("MyJsonProp", "some value")));
-            }
-        };
-
-        timer.schedule(task, 0, 30000);
-    }
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -67,7 +48,6 @@ public class MarsRtcBridge {
     public void handleIncomingMessage(Message<JsonObject> msg){
         System.out.println(msg.body());
         IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
-
 
     }
 }
