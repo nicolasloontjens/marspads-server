@@ -1,15 +1,18 @@
 package be.howest.ti.mars.web.bridge;
 
+import be.howest.ti.mars.logic.domain.Chatroom;
+import be.howest.ti.mars.logic.domain.events.BroadcastEvent;
+import be.howest.ti.mars.logic.domain.events.EventFactory;
+import be.howest.ti.mars.logic.domain.events.IncomingEvent;
+import be.howest.ti.mars.logic.domain.events.OutgoingEvent;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * In the MarsRtcBridge class you will find one example function which sends a message on the message bus to the client.
@@ -29,45 +32,42 @@ import java.util.TimerTask;
  * <p>
  */
 public class MarsRtcBridge {
-    private static final String EB_EVENT_TO_MARTIANS = "events.to.martians";
-    private SockJSHandler sockJSHandler;
     private EventBus eb;
+    private static final String CHNL_TO_CLIENTS = "events.to.clients";
 
-    /**
-     * Example function to put a message on the event bus every 10 seconds.
-     * The timer logic is only there to simulate a repetitive stream of data as an example.
-     * Please remove this timer logic or move it to an appropriate place.
-     * Please call the controller to get some business logic data. Afterwords publish the result to the client.
-     */
-    public void sendEventToClients() {
-        final Timer timer = new Timer();
+    public SockJSHandler createSockJSHandler(Vertx vertx) {
+        final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+        final PermittedOptions inbound = new PermittedOptions().setAddressRegex("events\\..+");
+        final PermittedOptions outbound = inbound;
 
-        TimerTask task = new TimerTask() {
-            public void run() {
-                eb.publish(EB_EVENT_TO_MARTIANS, new JsonObject(Map.of("MyJsonProp", "some value")));
-            }
-        };
+        final SockJSBridgeOptions options = new SockJSBridgeOptions().addInboundPermitted(inbound).addOutboundPermitted(outbound);
 
-        timer.schedule(task, 0, 30000);
-    }
-
-    private void createSockJSHandler() {
-        final PermittedOptions permittedOptions = new PermittedOptions().setAddressRegex("events\\..+");
-        final SockJSBridgeOptions options = new SockJSBridgeOptions()
-                .addInboundPermitted(permittedOptions)
-                .addOutboundPermitted(permittedOptions);
         sockJSHandler.bridge(options);
+        return sockJSHandler;
     }
 
-    public SockJSHandler getSockJSHandler(Vertx vertx) {
-        sockJSHandler = SockJSHandler.create(vertx);
+    public void handleIncomingMessage(Message<JsonObject> msg){
+        System.out.println(msg.body());
+        IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
+        OutgoingEvent outgoingEvent = Chatroom.handleEvent(incomingEvent);
+        handleOutgoingEvent(outgoingEvent);
+    }
+
+    public void setEb(Vertx vertx){
         eb = vertx.eventBus();
-        createSockJSHandler();
+    }
 
-        // This is for demo purposes only.
-        // Do not send messages in this getSockJSHandler function.
-        sendEventToClients();
+    private void handleOutgoingEvent(OutgoingEvent outgoingEvent){
+        switch(outgoingEvent.getType()){
+            case BROADCAST:
+                broadcastMessage((BroadcastEvent) outgoingEvent);
+                break;
+            case DISCARD:
+                break;
+        }
+    }
 
-        return sockJSHandler;
+    private void broadcastMessage(BroadcastEvent event){
+        eb.publish(CHNL_TO_CLIENTS, event.getMessage());
     }
 }

@@ -1,28 +1,18 @@
 package be.howest.ti.mars.logic.domain;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class ChatMessage {
     private final int chatid;
     private final String name;
     private final String content;
-    private Date timestamp;
-    private static final Logger LOGGER = Logger.getLogger(ChatMessage.class.getName());
+    private final String timestamp;
 
-    public ChatMessage(int chatid, String name, String content, String stringtimestamp){
+    public ChatMessage(int chatid, String name, String content, String timestamp){
         this.chatid = chatid;
         this.name = name;
         this.content = content;
-        try{
-            timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stringtimestamp);
-        }catch(ParseException ex){
-            LOGGER.log(Level.SEVERE,"Could not parse timestamp, assigned current timestamp as value");
-            timestamp = new Date();
-        }
+        this.timestamp = timestamp;
     }
 
     public int getChatid() {
@@ -37,7 +27,7 @@ public class ChatMessage {
         return content;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 }

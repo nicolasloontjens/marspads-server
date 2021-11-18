@@ -25,7 +25,8 @@ import java.util.logging.Logger;
  *  No need to update anything in this class unless you know what you are doing !!!
  */
 public class WebServer extends AbstractVerticle {
-    private static final String REALTIME_COMM_URI = "/events/*";
+    private static final String CHNL_TO_SERVER = "events.to.server";
+    private static final String CHNL_ROOT_PATH = "/events/*";
     private static final Logger LOGGER = Logger.getLogger(WebServer.class.getName());
     private Promise<Void> startPromise;
     private final MarsOpenApiBridge openApiBridge;
@@ -59,7 +60,10 @@ public class WebServer extends AbstractVerticle {
 
                                 Router mainRouter = Router.router(vertx);
                                 mainRouter.route().handler(createCorsHandler());
-                                mainRouter.route(REALTIME_COMM_URI).handler(rtcBridge.getSockJSHandler(vertx));
+                                mainRouter.route(CHNL_ROOT_PATH).handler(rtcBridge.createSockJSHandler(vertx));
+                                rtcBridge.setEb(vertx);
+                                vertx.eventBus().consumer(CHNL_TO_SERVER,rtcBridge::handleIncomingMessage);
+
 
                                 Router openApiRouter = openApiBridge.buildRouter(routerBuilder);
                                 mainRouter.mountSubRouter("/", openApiRouter);
@@ -92,6 +96,8 @@ public class WebServer extends AbstractVerticle {
         return CorsHandler.create(".*.")
                 .allowedHeader("x-requested-with")
                 .allowedHeader("Access-Control-Allow-Origin")
+                .allowCredentials(true)
+                .allowedHeader("Access-Control-Allow-Credentials")
                 .allowedHeader("origin")
                 .allowedHeader("Content-Type")
                 .allowedHeader("accept")
