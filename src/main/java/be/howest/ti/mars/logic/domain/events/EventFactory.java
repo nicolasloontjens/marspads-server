@@ -26,5 +26,10 @@ public class EventFactory {
         return event;
     }
 
+    public BroadcastEvent createBroadcastEvent(String msg) {
+        return new BroadcastEvent(msg);
+    }
+
+
 
 }

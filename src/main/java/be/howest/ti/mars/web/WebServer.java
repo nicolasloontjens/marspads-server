@@ -61,6 +61,7 @@ public class WebServer extends AbstractVerticle {
                                 Router mainRouter = Router.router(vertx);
                                 mainRouter.route().handler(createCorsHandler());
                                 mainRouter.route(CHNL_ROOT_PATH).handler(rtcBridge.createSockJSHandler(vertx));
+                                rtcBridge.setEb(vertx);
                                 vertx.eventBus().consumer(CHNL_TO_SERVER,rtcBridge::handleIncomingMessage);
 
 

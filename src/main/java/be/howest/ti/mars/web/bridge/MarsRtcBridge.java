@@ -1,7 +1,10 @@
 package be.howest.ti.mars.web.bridge;
 
+import be.howest.ti.mars.logic.domain.Chatroom;
+import be.howest.ti.mars.logic.domain.events.BroadcastEvent;
 import be.howest.ti.mars.logic.domain.events.EventFactory;
 import be.howest.ti.mars.logic.domain.events.IncomingEvent;
+import be.howest.ti.mars.logic.domain.events.OutgoingEvent;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -33,6 +36,7 @@ import java.util.TimerTask;
  */
 public class MarsRtcBridge {
     private EventBus eb;
+    private static final String CHNL_TO_CLIENTS = "events.to.clients";
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -48,6 +52,25 @@ public class MarsRtcBridge {
     public void handleIncomingMessage(Message<JsonObject> msg){
         System.out.println(msg.body());
         IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
+        OutgoingEvent outgoingEvent = Chatroom.handleEvent(incomingEvent);
+        handleOutgoingEvent(outgoingEvent);
+    }
 
+    public void setEb(Vertx vertx){
+        eb = vertx.eventBus();
+    }
+
+    private void handleOutgoingEvent(OutgoingEvent outgoingEvent){
+        switch(outgoingEvent.getType()){
+            case BROADCAST:
+                broadcastMessage((BroadcastEvent) outgoingEvent);
+                break;
+            case DISCARD:
+                break;
+        }
+    }
+
+    private void broadcastMessage(BroadcastEvent event){
+        eb.publish(CHNL_TO_CLIENTS, event.getMessage());
     }
 }
