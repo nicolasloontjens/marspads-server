@@ -13,9 +13,6 @@ import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * In the MarsRtcBridge class you will find one example function which sends a message on the message bus to the client.
