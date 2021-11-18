@@ -23,7 +23,7 @@ public class Chatroom {
     }
 
     private static OutgoingEvent handlePublicMessageEvent(MessageEvent e){
-        String outgoingMessage = String.format("<p>%s: %s",controller.getUser(Integer.parseInt( e.getMarsid())), e.getMessage());
+        String outgoingMessage = String.format("<p>%s: %s",controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
         return EventFactory.getInstance().createBroadcastEvent(outgoingMessage);
     }
 }
