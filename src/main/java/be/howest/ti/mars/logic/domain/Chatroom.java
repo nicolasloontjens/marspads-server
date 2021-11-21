@@ -49,17 +49,17 @@ public class Chatroom {
                 }
             }
         }
-
         switch(value){
             case 0:
+            case -1:
+                //receiver says no => send no response to sender
                 //receiver hasn't seen it yet
                 response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid), receivermid, value);
                 break;
             case 1:
-                //receiver says yes => send yes response to sender
-                break;
-            case -1:
-                //receiver says no => send no response to sender
+                //receiver says yes => send yes response to sender and create chat in db
+                response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid),sendermid,value);
+                controller.addChatid(sendermid,receivermid);
                 break;
         }
         return response;
