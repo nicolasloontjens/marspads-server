@@ -69,6 +69,6 @@ public class Chatroom {
         int chatid = Integer.parseInt(e.getChatid());
         int marsid = e.getMarsid();
         String messageContents = e.getMessage();
-        //todo: store the message in db
+        controller.addChatMessage(chatid, marsid, messageContents);
     }
 }
