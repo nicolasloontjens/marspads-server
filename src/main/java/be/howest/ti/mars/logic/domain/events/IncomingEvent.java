@@ -2,13 +2,13 @@ package be.howest.ti.mars.logic.domain.events;
 
 public abstract class IncomingEvent extends Event{
 
-    private String marsid;
-    public IncomingEvent(EventType type, String marsid) {
+    private int marsid;
+    public IncomingEvent(EventType type, int marsid) {
         super(type);
         this.marsid = marsid;
     }
 
-    public String getMarsid() {
+    public int getMarsid() {
         return marsid;
     }
 }

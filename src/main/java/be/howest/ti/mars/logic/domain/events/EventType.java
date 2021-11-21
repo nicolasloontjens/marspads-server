@@ -7,7 +7,8 @@ public enum EventType {
     MULTICAST("multicast"),
     MESSAGE("message"),
     DISCARD("discard"),
-    PRIVATEMESSAGE("privatemessage");
+    PRIVATEMESSAGE("privatemessage"),
+    REQUEST("chatrequest");
 
     private final String type;
 

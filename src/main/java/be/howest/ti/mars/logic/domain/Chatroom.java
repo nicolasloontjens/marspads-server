@@ -17,24 +17,58 @@ public class Chatroom {
             case PRIVATEMESSAGE:
                 outgoingEvent = handlePrivateMessageEvent((PrivateMessageEvent) e);
                 break;
+            case REQUEST:
+                outgoingEvent = handleChatRequest((ChatRequestEvent) e);
+                break;
         }
         return outgoingEvent;
     }
 
     private static OutgoingEvent handlePublicMessageEvent(MessageEvent e){
-        String outgoingMessage = String.format("%s: %s",controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
+        String outgoingMessage = String.format("%s: %s",controller.getUser(e.getMarsid()).getName(), e.getMessage());
         return EventFactory.getInstance().createBroadcastEvent(outgoingMessage);
     }
 
     private static OutgoingEvent handlePrivateMessageEvent(PrivateMessageEvent e){
-        String outgoingMessage = String.format("%s: %s", controller.getUser(Integer.parseInt( e.getMarsid())).getName(), e.getMessage());
+        String outgoingMessage = String.format("%s: %s", controller.getUser(e.getMarsid()).getName(), e.getMessage());
         storeMessageInDatabase(e);
         return EventFactory.getInstance().createMulticastEvent(outgoingMessage, Integer.parseInt(e.getChatid()));
     }
 
+    private static OutgoingEvent handleChatRequest(ChatRequestEvent e){
+        int sendermid = e.getMarsid();
+        int receivercontactid = e.getReceivercontactid();
+        int receivermid = controller.getUserByContactid(receivercontactid).getMarsid();
+        int value = e.getValue();
+        UnicastEvent response = null;
+        //first check if they already have a chat, if so just discard it
+        for(Chat chat : controller.getChatids(sendermid)){
+            for(Chat chat2 : controller.getChatids(receivermid)){
+                if(chat.getChatid() == chat2.getChatid()){
+                    return null;
+                }
+            }
+        }
+
+        switch(value){
+            case 0:
+                //receiver hasn't seen it yet
+                response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid), receivermid, value);
+                break;
+            case 1:
+                //receiver says yes => send yes response to sender
+                break;
+            case -1:
+                //receiver says no => send no response to sender
+                break;
+        }
+        return response;
+    }
+
     private static void storeMessageInDatabase(PrivateMessageEvent e){
         int chatid = Integer.parseInt(e.getChatid());
-        int marsid = Integer.parseInt(e.getMarsid());
+        int marsid = e.getMarsid();
         String messageContents = e.getMessage();
+        //todo: store the message in db
     }
 }

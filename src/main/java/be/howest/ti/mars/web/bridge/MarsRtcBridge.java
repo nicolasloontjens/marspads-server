@@ -32,6 +32,7 @@ public class MarsRtcBridge {
     private EventBus eb;
     private static final String CHNL_TO_CLIENTS = "events.to.clients";
     private static final String CHNL_TO_CLIENT_MULTICAST = "events.to.clients.";
+    private static final String CHNL_TO_CLIENT_UNICAST = "events.to.clients.mid.";
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -57,12 +58,17 @@ public class MarsRtcBridge {
 
     private void handleOutgoingEvent(OutgoingEvent outgoingEvent){
         switch(outgoingEvent.getType()){
+            default:
+                break;
             case BROADCAST:
                 broadcastMessage((BroadcastEvent) outgoingEvent);
                 break;
             case MULTICAST:
                 multicastMessage((MulticastEvent) outgoingEvent);
                 break;
+            case UNICAST:
+                unicastMessage((UnicastEvent) outgoingEvent);
+
         }
     }
 
@@ -72,5 +78,14 @@ public class MarsRtcBridge {
 
     private void multicastMessage(MulticastEvent event){
         eb.publish(CHNL_TO_CLIENT_MULTICAST + event.getChatid(),event.getMessage());
+    }
+
+    private void unicastMessage(UnicastEvent event){
+        JsonObject obj = new JsonObject();
+        obj.put("sendername", event.getSendername());
+        obj.put("sendermid",event.getSendermid());
+        obj.put("receivermid",event.getReceivermid());
+        obj.put("value",event.getValue());
+        eb.publish(CHNL_TO_CLIENT_UNICAST + event.getReceivermid(), obj);
     }
 }

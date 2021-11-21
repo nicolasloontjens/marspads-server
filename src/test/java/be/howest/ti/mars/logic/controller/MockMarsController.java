@@ -27,6 +27,11 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
+    public User getUserByContactid(int contactid) {
+        return null;
+    }
+
+    @Override
     public List<User> getContacts(int marsid) {
         List<User> contacts = new ArrayList<>();
 

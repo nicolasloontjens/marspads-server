@@ -35,6 +35,7 @@ public class MarsH2Repository {
     private static final Logger LOGGER = Logger.getLogger(MarsH2Repository.class.getName());
     private static final String SQL_INSERT_USER = "insert into user(marsid, name) values (?,?)";
     private static final String SQL_GET_USER = "select * from user where marsid = ?";
+    private static final String SQL_GET_USER_WITH_CONTACTID = "select * from marsidcontactid where contactid = ?";
     private static final String SQL_SET_CONTACTID = "insert into marsidcontactid (marsid) values(?)";
     private static final String SQL_GET_CONTACTID = "select contactid from marsidcontactid where marsid = ?";
     private static final String SQL_GET_CONTACTS_MARSID = "select marsid, contactid from marsidcontactid m where contactid in (select us.contactid from user u left join usercontacts us on u.marsid = us.marsid where u.marsid = ?)";
@@ -136,6 +137,27 @@ public class MarsH2Repository {
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to get contactid", ex);
             throw new RepositoryException("Could not get contactid.");
+        }
+    }
+
+    public User getUserByContactid(int contactid){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_GET_USER_WITH_CONTACTID)
+        ){
+            stmnt.setInt(1,contactid);
+            try(ResultSet rs = stmnt.executeQuery()){
+                if(rs.next()){
+                    int mid = rs.getInt("marsid");
+                    return new User(mid,"",contactid);
+                }
+                else{
+                    throw new RepositoryException("Failed to get user");
+                }
+            }
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE,"Failed to get user", ex);
+            throw new RepositoryException("Could not get user.");
         }
     }
 

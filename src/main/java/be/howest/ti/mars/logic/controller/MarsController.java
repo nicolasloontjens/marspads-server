@@ -11,6 +11,8 @@ public interface MarsController {
 
     User getUser(int marsid);
 
+    User getUserByContactid(int contactid);
+
     List<User> getContacts(int marsid);
 
     boolean addContact(int marsid, int contactid);

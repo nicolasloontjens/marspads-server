@@ -38,6 +38,11 @@ public class DefaultMarsController implements MarsController {
         return Repositories.getH2Repo().getUser(marsid);
     }
 
+    @Override
+    public User getUserByContactid(int contactid) {
+        return Repositories.getH2Repo().getUserByContactid(contactid);
+    }
+
     private String getRandomName(){
         //since your marsid has your real name linked to it, we
         List<String> nameFaker = new ArrayList<>();
