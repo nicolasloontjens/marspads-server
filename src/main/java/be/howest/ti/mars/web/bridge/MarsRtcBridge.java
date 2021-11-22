@@ -58,8 +58,6 @@ public class MarsRtcBridge {
 
     private void handleOutgoingEvent(OutgoingEvent outgoingEvent){
         switch(outgoingEvent.getType()){
-            default:
-                break;
             case BROADCAST:
                 broadcastMessage((BroadcastEvent) outgoingEvent);
                 break;
@@ -68,7 +66,9 @@ public class MarsRtcBridge {
                 break;
             case UNICAST:
                 unicastMessage((UnicastEvent) outgoingEvent);
-
+                break;
+            default:
+                break;
         }
     }
 

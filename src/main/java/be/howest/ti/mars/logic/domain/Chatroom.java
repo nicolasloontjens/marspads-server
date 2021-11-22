@@ -6,6 +6,10 @@ import be.howest.ti.mars.logic.domain.events.*;
 
 public class Chatroom {
 
+    private Chatroom(){
+        throw new IllegalStateException("utility class");
+    }
+
     private static final MarsController controller = new DefaultMarsController();
 
     public static OutgoingEvent handleEvent(IncomingEvent e){
@@ -19,6 +23,8 @@ public class Chatroom {
                 break;
             case REQUEST:
                 outgoingEvent = handleChatRequest((ChatRequestEvent) e);
+                break;
+            default:
                 break;
         }
         return outgoingEvent;
@@ -60,6 +66,8 @@ public class Chatroom {
                 //receiver says yes => send yes response to sender and create chat in db
                 response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid),sendermid,value);
                 controller.addChatid(sendermid,receivermid);
+                break;
+            default:
                 break;
         }
         return response;
