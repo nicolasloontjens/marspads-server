@@ -152,12 +152,12 @@ public class MarsH2Repository {
                     return new User(mid,"",contactid);
                 }
                 else{
-                    throw new RepositoryException("Failed to get user");
+                    throw new RepositoryException("Failed to get user with their contactid");
                 }
             }
         }catch(SQLException ex){
-            LOGGER.log(Level.SEVERE,"Failed to get user", ex);
-            throw new RepositoryException("Could not get user.");
+            LOGGER.log(Level.SEVERE,"Failed to get user by their contactid.", ex);
+            throw new RepositoryException("Could not get user using their contactid.");
         }
     }
 
@@ -179,7 +179,7 @@ public class MarsH2Repository {
                 }
             }
         }catch(SQLException ex){
-            LOGGER.log(Level.SEVERE,"Failed to get user", ex);
+            LOGGER.log(Level.SEVERE,"Failed to get user.", ex);
             throw new RepositoryException("Could not get user.");
         }
     }

@@ -1,5 +1,6 @@
 package be.howest.ti.mars.logic.domain.events;
 
+import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -76,6 +77,26 @@ public class EventsTest {
         assertEquals(BroadcastEvent.class, event.getClass());
         assertEquals(EventType.BROADCAST,event.getType());
         assertEquals("hello",event.getMessage());
+    }
+
+    @Test
+    void testMulticastEvent(){
+        MulticastEvent event = getEventFactory().createMulticastEvent("hello there", 2);
+        assertEquals(MulticastEvent.class, event.getClass());
+        assertEquals(EventType.MULTICAST,event.getType());
+        assertEquals(2, event.getChatid());
+        assertEquals("hello there", event.getMessage());
+    }
+
+    @Test
+    void testUnicastEvent(){
+        UnicastEvent event = getEventFactory().createUnicastEvent(new User(1,"Michael"), 2,1);
+        assertEquals(UnicastEvent.class,event.getClass());
+        assertEquals("Michael",event.getSendername());
+        assertEquals(1,event.getSendermid());
+        assertEquals(2, event.getReceivermid());
+        assertEquals(1,event.getValue());
+
     }
 
 
