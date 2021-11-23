@@ -11,6 +11,8 @@ public interface MarsController {
 
     User getUser(int marsid);
 
+    User getUserByContactid(int contactid);
+
     List<User> getContacts(int marsid);
 
     boolean addContact(int marsid, int contactid);
@@ -23,5 +25,5 @@ public interface MarsController {
 
     boolean addChatid(int marsid1, int marsid2);
 
-    boolean addChatMessage(int chatid, int marsid, String content, String timestamp);
+    boolean addChatMessage(int chatid, int marsid, String content);
 }

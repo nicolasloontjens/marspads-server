@@ -27,11 +27,16 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
+    public User getUserByContactid(int contactid) {
+        return null;
+    }
+
+    @Override
     public List<User> getContacts(int marsid) {
         List<User> contacts = new ArrayList<>();
-        System.out.println(marsidcontacts.values());
+
         for(Integer i : marsidcontacts.values()){
-            System.out.println(i);
+
             if(marsidcontacts.get(marsid) == i){
                 contacts.add(new User("john",i));
             }
@@ -41,7 +46,6 @@ public class MockMarsController implements MarsController {
 
     @Override
     public boolean addContact(int marsid, int contactid) {
-        System.out.println(marsid + contactid);
         if(marsidcontacts.containsKey(marsid)){
             if(marsidcontacts.get(marsid) == contactid){
                 return false;
@@ -72,7 +76,7 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
+    public boolean addChatMessage(int chatid, int marsid, String content) {
         return false;
     }
 }

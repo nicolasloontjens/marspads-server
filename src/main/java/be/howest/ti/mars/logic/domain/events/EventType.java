@@ -4,9 +4,11 @@ public enum EventType {
 
     UNICAST("unicast"),
     BROADCAST("broadcast"),
+    MULTICAST("multicast"),
     MESSAGE("message"),
     DISCARD("discard"),
-    PRIVATEMESSAGE("privateMessage");
+    PRIVATEMESSAGE("privatemessage"),
+    REQUEST("chatrequest");
 
     private final String type;
 

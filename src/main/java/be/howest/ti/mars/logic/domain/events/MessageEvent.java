@@ -6,12 +6,12 @@ public class MessageEvent extends IncomingEvent{
 
     private final String message;
 
-    public MessageEvent(String marsid, String message) {
+    public MessageEvent(int marsid, String message) {
         super(EventType.MESSAGE, marsid);
         this.message = message;
     }
 
-    public MessageEvent(EventType t, String marsid, String message){
+    public MessageEvent(EventType t, int marsid, String message){
         super(t, marsid);
         this.message = message;
     }

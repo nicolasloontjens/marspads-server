@@ -1,10 +1,7 @@
 package be.howest.ti.mars.web.bridge;
 
 import be.howest.ti.mars.logic.domain.Chatroom;
-import be.howest.ti.mars.logic.domain.events.BroadcastEvent;
-import be.howest.ti.mars.logic.domain.events.EventFactory;
-import be.howest.ti.mars.logic.domain.events.IncomingEvent;
-import be.howest.ti.mars.logic.domain.events.OutgoingEvent;
+import be.howest.ti.mars.logic.domain.events.*;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -34,6 +31,8 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 public class MarsRtcBridge {
     private EventBus eb;
     private static final String CHNL_TO_CLIENTS = "events.to.clients";
+    private static final String CHNL_TO_CLIENT_MULTICAST = "events.to.clients.";
+    private static final String CHNL_TO_CLIENT_UNICAST = "events.to.clients.mid.";
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -62,12 +61,31 @@ public class MarsRtcBridge {
             case BROADCAST:
                 broadcastMessage((BroadcastEvent) outgoingEvent);
                 break;
-            case DISCARD:
+            case MULTICAST:
+                multicastMessage((MulticastEvent) outgoingEvent);
+                break;
+            case UNICAST:
+                unicastMessage((UnicastEvent) outgoingEvent);
+                break;
+            default:
                 break;
         }
     }
 
     private void broadcastMessage(BroadcastEvent event){
         eb.publish(CHNL_TO_CLIENTS, event.getMessage());
+    }
+
+    private void multicastMessage(MulticastEvent event){
+        eb.publish(CHNL_TO_CLIENT_MULTICAST + event.getChatid(),event.getMessage());
+    }
+
+    private void unicastMessage(UnicastEvent event){
+        JsonObject obj = new JsonObject();
+        obj.put("sendername", event.getSendername());
+        obj.put("sendermid",event.getSendermid());
+        obj.put("receivermid",event.getReceivermid());
+        obj.put("value",event.getValue());
+        eb.publish(CHNL_TO_CLIENT_UNICAST + event.getReceivermid(), obj);
     }
 }

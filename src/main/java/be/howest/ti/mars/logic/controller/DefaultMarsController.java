@@ -38,6 +38,11 @@ public class DefaultMarsController implements MarsController {
         return Repositories.getH2Repo().getUser(marsid);
     }
 
+    @Override
+    public User getUserByContactid(int contactid) {
+        return Repositories.getH2Repo().getUserByContactid(contactid);
+    }
+
     private String getRandomName(){
         //since your marsid has your real name linked to it, we
         List<String> nameFaker = new ArrayList<>();
@@ -102,7 +107,7 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatMessage(int chatid, int marsid, String content, String timestamp) {
-        return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content, timestamp);
+    public boolean addChatMessage(int chatid, int marsid, String content) {
+        return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content);
     }
 }
