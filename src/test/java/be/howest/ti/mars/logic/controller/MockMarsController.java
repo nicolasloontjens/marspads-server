@@ -3,6 +3,7 @@ package be.howest.ti.mars.logic.controller;
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.User;
+import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +82,7 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public void insertUserPushSubscription(int marsid, String subscription) {
+    public void insertUserPushSubscription(int marsid, JsonObject subscription) {
 
     }
 }

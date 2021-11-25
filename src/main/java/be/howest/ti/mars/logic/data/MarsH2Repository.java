@@ -4,6 +4,7 @@ import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
+import io.vertx.core.json.JsonObject;
 import org.h2.tools.Server;
 
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
     private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
-    private static final String SQL_INSERT_SUBSCRIPTION= "update user set subscription = ? where marsid = ?";
+    private static final String SQL_INSERT_SUBSCRIPTION= "update user set endpoint = ?, userkey = ?, auth = ? where marsid = ?";
 
 
     private final Server dbWebConsole;
@@ -339,13 +340,15 @@ public class MarsH2Repository {
         }
     }
 
-    public void insertUserPushSubscription(int marsid, String subscription){
+    public void insertUserPushSubscription(int marsid, JsonObject subscription){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_SUBSCRIPTION);
         ){
-            stmnt.setInt(1,marsid);
-            stmnt.setString(2,subscription);
+            stmnt.setString(1,subscription.getString("endpoint"));
+            stmnt.setString(2,subscription.getJsonObject("keys").getString("p256dh"));
+            stmnt.setString(3,subscription.getJsonObject("keys").getString("auth"));
+            stmnt.setInt(4,marsid);
             int affectedrows = stmnt.executeUpdate();
             if(affectedrows == 0){
                 throw new SQLException("Failed to add subscription");

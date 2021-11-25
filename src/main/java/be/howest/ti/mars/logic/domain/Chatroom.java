@@ -109,8 +109,8 @@ public class Chatroom {
     }
 
     private void storeUserSubscriptionInDatabase(SubscriptionEvent e){
-        controller.insertUserPushSubscription(e.getMarsid(),e.getData().toString());
-        JsonObject data = e.getData().getJsonObject("subscription");
+        controller.insertUserPushSubscription(e.getMarsid(),e.getData());
+        JsonObject data = e.getData();
         String url = data.getString("endpoint");
         String userPublicKey = data.getJsonObject("keys").getString("p256dh");
         String userAuthBytes = data.getJsonObject("keys").getString("auth");
