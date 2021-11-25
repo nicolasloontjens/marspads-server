@@ -26,4 +26,6 @@ public interface MarsController {
     boolean addChatid(int marsid1, int marsid2);
 
     boolean addChatMessage(int chatid, int marsid, String content);
+
+    void insertUserPushSubscription(int marsid, String subscription);
 }

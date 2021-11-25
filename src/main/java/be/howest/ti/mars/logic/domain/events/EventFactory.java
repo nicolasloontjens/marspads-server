@@ -32,7 +32,7 @@ public class EventFactory {
                 event = new ChatRequestEvent(json.getInteger("sendermid"), json.getInteger("receivercontactid"), json.getInteger("answer"));
                 break;
             case SUBSCRIPTION:
-                event = new SubscriptionEvent(json.getInteger("mid"),json.getJsonObject("subscription"));
+                event = new SubscriptionEvent(json.getInteger("marsid"),json.getJsonObject("subscription"));
                 break;
             default:
                 break;

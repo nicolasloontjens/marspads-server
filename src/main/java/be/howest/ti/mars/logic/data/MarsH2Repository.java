@@ -47,6 +47,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
     private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
+    private static final String SQL_INSERT_SUBSCRIPTION= "insert into user(subscription) values(?) where marsid = ?";
 
 
     private final Server dbWebConsole;
@@ -335,6 +336,22 @@ public class MarsH2Repository {
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to add message to the chat", ex);
             throw new RepositoryException("Failed to add message");
+        }
+    }
+
+    public void insertUserPushSubscription(int marsid, String subscription){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_SUBSCRIPTION);
+        ){
+            stmnt.setInt(1,marsid);
+            stmnt.setString(2,subscription);
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Failed to add subscription");
+            }
+        }catch(SQLException ex) {
+            LOGGER.log(Level.SEVERE,"Failed to add push subscription to user", ex);
         }
     }
 

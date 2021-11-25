@@ -79,4 +79,9 @@ public class MockMarsController implements MarsController {
     public boolean addChatMessage(int chatid, int marsid, String content) {
         return false;
     }
+
+    @Override
+    public void insertUserPushSubscription(int marsid, String subscription) {
+
+    }
 }

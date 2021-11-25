@@ -110,4 +110,9 @@ public class DefaultMarsController implements MarsController {
     public boolean addChatMessage(int chatid, int marsid, String content) {
         return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content);
     }
+
+    @Override
+    public void insertUserPushSubscription(int marsid, String subscription) {
+        Repositories.getH2Repo().insertUserPushSubscription(marsid, subscription);
+    }
 }

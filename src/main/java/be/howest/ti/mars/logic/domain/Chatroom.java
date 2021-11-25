@@ -4,6 +4,8 @@ import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
 import be.howest.ti.mars.logic.domain.events.*;
 
+import java.security.Security;
+
 public class Chatroom {
 
     private Chatroom(){
@@ -25,6 +27,7 @@ public class Chatroom {
                 outgoingEvent = handleChatRequest((ChatRequestEvent) e);
                 break;
             case SUBSCRIPTION:
+                storeUserSubscriptionInDatabase((SubscriptionEvent) e);
                 break;
             default:
                 break;
@@ -83,6 +86,8 @@ public class Chatroom {
     }
 
     private static void storeUserSubscriptionInDatabase(SubscriptionEvent e){
-
+        controller.insertUserPushSubscription(e.getMarsid(),e.getData().toString());
     }
+
+
 }
