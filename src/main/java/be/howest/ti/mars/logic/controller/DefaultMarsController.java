@@ -3,6 +3,7 @@ package be.howest.ti.mars.logic.controller;
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.json.JsonObject;
 
@@ -113,7 +114,7 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
-    public void insertUserPushSubscription(int marsid, JsonObject subscription) {
+    public void insertUserPushSubscription(int marsid, NotificationData subscription) {
         Repositories.getH2Repo().insertUserPushSubscription(marsid, subscription);
     }
 }

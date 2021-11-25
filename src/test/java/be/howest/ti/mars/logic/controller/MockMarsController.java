@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.json.JsonObject;
 
@@ -82,7 +83,7 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public void insertUserPushSubscription(int marsid, JsonObject subscription) {
+    public void insertUserPushSubscription(int marsid, NotificationData subscription) {
 
     }
 }

@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.data;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
 import io.vertx.core.json.JsonObject;
@@ -340,14 +341,14 @@ public class MarsH2Repository {
         }
     }
 
-    public void insertUserPushSubscription(int marsid, JsonObject subscription){
+    public void insertUserPushSubscription(int marsid, NotificationData subscription){
         try(
                 Connection con = getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_SUBSCRIPTION);
         ){
-            stmnt.setString(1,subscription.getString("endpoint"));
-            stmnt.setString(2,subscription.getJsonObject("keys").getString("p256dh"));
-            stmnt.setString(3,subscription.getJsonObject("keys").getString("auth"));
+            stmnt.setString(1,subscription.getEndpoint());
+            stmnt.setString(2,subscription.getUserkey());
+            stmnt.setString(3,subscription.getAuth());
             stmnt.setInt(4,marsid);
             int affectedrows = stmnt.executeUpdate();
             if(affectedrows == 0){

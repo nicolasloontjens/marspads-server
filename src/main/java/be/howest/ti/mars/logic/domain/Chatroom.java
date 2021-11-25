@@ -89,6 +89,7 @@ public class Chatroom {
                 //receiver says no => send no response to sender
                 //receiver hasn't seen it yet
                 response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid), receivermid, value);
+                sendChatRequestNotification(e);
                 break;
             case 1:
                 //receiver says yes => send yes response to sender and create chat in db
@@ -110,18 +111,14 @@ public class Chatroom {
 
     private void storeUserSubscriptionInDatabase(SubscriptionEvent e){
         controller.insertUserPushSubscription(e.getMarsid(),e.getData());
-        JsonObject data = e.getData();
-        String url = data.getString("endpoint");
-        String userPublicKey = data.getJsonObject("keys").getString("p256dh");
-        String userAuthBytes = data.getJsonObject("keys").getString("auth");
-        try {
-            pushService.send(new Notification(url,userPublicKey,userAuthBytes,"hello there"));
-        } catch (GeneralSecurityException | JoseException | IOException | ExecutionException | InterruptedException ex) {
-            ex.printStackTrace();
-        }
-
-
     }
 
+    private void sendChatRequestNotification(ChatRequestEvent e) {
+        //get the receivers notification data, and send them a request
+        JsonObject receiverPushData = null;//get from db with contactid
+        //fill the string of the message with correct data from the sender (name, want to chat)
+        //send the actual notification
+
+    }
 
 }

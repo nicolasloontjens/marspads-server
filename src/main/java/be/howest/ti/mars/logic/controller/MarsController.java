@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import io.vertx.core.json.JsonObject;
 
@@ -28,5 +29,7 @@ public interface MarsController {
 
     boolean addChatMessage(int chatid, int marsid, String content);
 
-    void insertUserPushSubscription(int marsid, JsonObject subscription);
+    void insertUserPushSubscription(int marsid, NotificationData subscription);
+
+
 }
