@@ -4,16 +4,34 @@ import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
 import be.howest.ti.mars.logic.domain.events.*;
 import be.howest.ti.mars.logic.util.Config;
+import io.vertx.core.json.JsonObject;
+import nl.martijndwars.webpush.Notification;
+import nl.martijndwars.webpush.PushService;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.lang.JoseException;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Security;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Chatroom {
 
     private static final Chatroom instance = new Chatroom();
+    private static final Logger LOGGER = Logger.getLogger(Chatroom.class.getName());
     private static final String PRIVATE_VAPID_KEY = Config.getInstance().readSetting("push.private.key");
     private static final String PUBLIC_VAPID_KEY = Config.getInstance().readSetting("push.public.key");
+    private static PushService pushService;
 
     public static Chatroom getInstance(){
+        Security.addProvider(new BouncyCastleProvider());
+        try{
+            pushService = new PushService(PUBLIC_VAPID_KEY,PRIVATE_VAPID_KEY);
+        }catch(GeneralSecurityException e) {
+            LOGGER.log(Level.SEVERE,"Could not create pushservice",e);
+        }
         return instance;
     }
 
@@ -92,6 +110,17 @@ public class Chatroom {
 
     private void storeUserSubscriptionInDatabase(SubscriptionEvent e){
         controller.insertUserPushSubscription(e.getMarsid(),e.getData().toString());
+        JsonObject data = e.getData().getJsonObject("subscription");
+        String url = data.getString("endpoint");
+        String userPublicKey = data.getJsonObject("keys").getString("p256dh");
+        String userAuthBytes = data.getJsonObject("keys").getString("auth");
+        try {
+            pushService.send(new Notification(url,userPublicKey,userAuthBytes,"hello there"));
+        } catch (GeneralSecurityException | JoseException | IOException | ExecutionException | InterruptedException ex) {
+            ex.printStackTrace();
+        }
+
+
     }
 
 

@@ -10,7 +10,7 @@ create table user
 (
     marsid  int primary key not null,
     name    varchar(255) not null,
-    subscription varchar(10000)
+    subscription json
 );
 
 drop table if exists marsidcontactid;

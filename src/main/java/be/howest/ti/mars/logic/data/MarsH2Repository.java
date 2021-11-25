@@ -47,7 +47,7 @@ public class MarsH2Repository {
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
     private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
-    private static final String SQL_INSERT_SUBSCRIPTION= "insert into user(subscription) values(?) where marsid = ?";
+    private static final String SQL_INSERT_SUBSCRIPTION= "update user set subscription = ? where marsid = ?";
 
 
     private final Server dbWebConsole;
