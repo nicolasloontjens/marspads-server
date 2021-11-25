@@ -50,6 +50,7 @@ public class MarsH2Repository {
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
     private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
     private static final String SQL_INSERT_SUBSCRIPTION= "update user set endpoint = ?, userkey = ?, auth = ? where marsid = ?";
+    private static final String SQL_RETRIEVE_SUBSCRIPTION= "select endpoint, userkey, auth from user where marsid = ?";
 
 
     private final Server dbWebConsole;
@@ -356,6 +357,29 @@ public class MarsH2Repository {
             }
         }catch(SQLException ex) {
             LOGGER.log(Level.SEVERE,"Failed to add push subscription to user", ex);
+        }
+    }
+
+    public NotificationData retrieveSubscriptionDataWithMarsID(int marsid){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_RETRIEVE_SUBSCRIPTION);
+        ){
+            stmnt.setInt(1,marsid);
+            try(ResultSet rs = stmnt.executeQuery()){
+                if(rs.next()){
+                    String endpoint = rs.getString(1);
+                    String userkey = rs.getString(2);
+                    String auth = rs.getString(3);
+                    return new NotificationData(endpoint, userkey, auth);
+                }
+                else{
+                    throw new SQLException("Failed to retrieve data");
+                }
+            }
+        }catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE,"Failed to retrieve push subscription data", ex);
+            throw new RepositoryException("Could not retrieve data.");
         }
     }
 

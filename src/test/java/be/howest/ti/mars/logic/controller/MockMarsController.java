@@ -86,4 +86,9 @@ public class MockMarsController implements MarsController {
     public void insertUserPushSubscription(int marsid, NotificationData subscription) {
 
     }
+
+    @Override
+    public NotificationData retrieveSubscriptionData(int marsid) {
+        return null;
+    }
 }

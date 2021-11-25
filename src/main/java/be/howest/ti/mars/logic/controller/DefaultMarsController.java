@@ -74,7 +74,7 @@ public class DefaultMarsController implements MarsController {
         nameFaker.add("Thor");
         nameFaker.add("Lando");
         nameFaker.add("Alvin");
-        int randnr = rand.nextInt(25);
+        int randnr = rand.nextInt(26);
         return nameFaker.get(randnr);
     }
 
@@ -116,5 +116,10 @@ public class DefaultMarsController implements MarsController {
     @Override
     public void insertUserPushSubscription(int marsid, NotificationData subscription) {
         Repositories.getH2Repo().insertUserPushSubscription(marsid, subscription);
+    }
+
+    @Override
+    public NotificationData retrieveSubscriptionData(int marsid) {
+        return Repositories.getH2Repo().retrieveSubscriptionDataWithMarsID(marsid);
     }
 }

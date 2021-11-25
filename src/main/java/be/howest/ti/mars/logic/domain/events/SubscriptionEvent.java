@@ -6,9 +6,10 @@ import io.vertx.core.json.JsonObject;
 public class SubscriptionEvent extends IncomingEvent{
 
     private final NotificationData data;
+
     public SubscriptionEvent(int marsid, JsonObject data) {
         super(EventType.SUBSCRIPTION, marsid);
-        data = new NotificationData(data.getString("endpoint"),data.getJsonObject("keys").getString("p256dh"),data.getJsonObject("keys").getString("auth"));
+        this.data = new NotificationData(data.getString("endpoint"),data.getJsonObject("keys").getString("p256dh"),data.getJsonObject("keys").getString("auth"));
     }
 
     public NotificationData getData() {

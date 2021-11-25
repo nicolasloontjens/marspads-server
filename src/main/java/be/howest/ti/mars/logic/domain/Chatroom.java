@@ -12,7 +12,10 @@ import org.jose4j.lang.JoseException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -115,9 +118,16 @@ public class Chatroom {
 
     private void sendChatRequestNotification(ChatRequestEvent e) {
         //get the receivers notification data, and send them a request
-        JsonObject receiverPushData = null;//get from db with contactid
-        //fill the string of the message with correct data from the sender (name, want to chat)
-        //send the actual notification
+        int receivermid = controller.getUserByContactid(e.getReceivercontactid()).getMarsid();
+        User sender = controller.getUser(e.getMarsid());
+        NotificationData receiverPushData = controller.retrieveSubscriptionData(receivermid);
+        String payload = String.format("%s has sent you a chat request!",sender.getName());
+        try{
+            Notification notification = new Notification(receiverPushData.getEndpoint(), receiverPushData.getUserkey(), receiverPushData.getAuth(), payload);
+            pushService.send(notification);
+        } catch (JoseException | GeneralSecurityException | IOException | ExecutionException | InterruptedException ex) {
+            LOGGER.log(Level.SEVERE,"Something went wrong sending a message to the client:", ex);
+        }
 
     }
 

@@ -31,5 +31,5 @@ public interface MarsController {
 
     void insertUserPushSubscription(int marsid, NotificationData subscription);
 
-
+    NotificationData retrieveSubscriptionData(int marsid);
 }
