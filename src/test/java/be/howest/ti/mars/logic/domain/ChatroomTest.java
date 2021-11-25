@@ -39,7 +39,8 @@ class ChatroomTest {
     @Test
     void testHandleMessage(){
         MessageEvent event = new MessageEvent(1,"hello mr fors");
-        OutgoingEvent result = Chatroom.handleEvent(event);
+        Chatroom chatroom = Chatroom.getInstance();
+        OutgoingEvent result = chatroom.handleEvent(event);
         assertEquals(BroadcastEvent.class,result.getClass());
         assertNotEquals("",result.getMessage());
         assertEquals(EventType.BROADCAST, result.getType());
@@ -48,7 +49,8 @@ class ChatroomTest {
     @Test
     void testHandlePrivateMessage(){
         PrivateMessageEvent event = new PrivateMessageEvent(1,"","2");
-        OutgoingEvent result = Chatroom.handleEvent(event);
+        Chatroom chatroom = Chatroom.getInstance();
+        OutgoingEvent result = chatroom.handleEvent(event);
         assertEquals(MulticastEvent.class,result.getClass());
         assertEquals(EventType.MULTICAST,result.getType());
         assertNotEquals("",result.getMessage());
@@ -57,7 +59,8 @@ class ChatroomTest {
     @Test
     void testHandleChatRequest(){
         ChatRequestEvent event = new ChatRequestEvent(1,2,0);
-        UnicastEvent result = (UnicastEvent) Chatroom.handleEvent(event);
+        Chatroom chatroom = Chatroom.getInstance();
+        UnicastEvent result = (UnicastEvent) chatroom.handleEvent(event);
         assertEquals(UnicastEvent.class,result.getClass());
         assertEquals(EventType.UNICAST,result.getType());
         assertEquals(0,result.getValue());

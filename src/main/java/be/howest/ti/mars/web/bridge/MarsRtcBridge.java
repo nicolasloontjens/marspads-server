@@ -30,9 +30,11 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
  */
 public class MarsRtcBridge {
     private EventBus eb;
+    private Chatroom chatroom;
     private static final String CHNL_TO_CLIENTS = "events.to.clients";
     private static final String CHNL_TO_CLIENT_MULTICAST = "events.to.clients.";
     private static final String CHNL_TO_CLIENT_UNICAST = "events.to.clients.mid.";
+
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -48,7 +50,7 @@ public class MarsRtcBridge {
     public void handleIncomingMessage(Message<JsonObject> msg){
         System.out.println(msg.body());
         IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
-        OutgoingEvent outgoingEvent = Chatroom.handleEvent(incomingEvent);
+        OutgoingEvent outgoingEvent = chatroom.handleEvent(incomingEvent);
         handleOutgoingEvent(outgoingEvent);
     }
 
@@ -87,5 +89,10 @@ public class MarsRtcBridge {
         obj.put("receivermid",event.getReceivermid());
         obj.put("value",event.getValue());
         eb.publish(CHNL_TO_CLIENT_UNICAST + event.getReceivermid(), obj);
+    }
+
+    public void createChatroom() {
+        chatroom = Chatroom.getInstance();
+
     }
 }

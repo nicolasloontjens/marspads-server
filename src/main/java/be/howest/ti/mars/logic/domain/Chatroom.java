@@ -3,18 +3,23 @@ package be.howest.ti.mars.logic.domain;
 import be.howest.ti.mars.logic.controller.DefaultMarsController;
 import be.howest.ti.mars.logic.controller.MarsController;
 import be.howest.ti.mars.logic.domain.events.*;
+import be.howest.ti.mars.logic.util.Config;
 
 import java.security.Security;
 
 public class Chatroom {
 
-    private Chatroom(){
-        throw new IllegalStateException("utility class");
+    private static final Chatroom instance = new Chatroom();
+    private static final String PRIVATE_VAPID_KEY = Config.getInstance().readSetting("push.private.key");
+    private static final String PUBLIC_VAPID_KEY = Config.getInstance().readSetting("push.public.key");
+
+    public static Chatroom getInstance(){
+        return instance;
     }
 
     private static final MarsController controller = new DefaultMarsController();
 
-    public static OutgoingEvent handleEvent(IncomingEvent e){
+    public OutgoingEvent handleEvent(IncomingEvent e){
         OutgoingEvent outgoingEvent = null;
         switch(e.getType()){
             case MESSAGE:
@@ -35,18 +40,18 @@ public class Chatroom {
         return outgoingEvent;
     }
 
-    private static OutgoingEvent handlePublicMessageEvent(MessageEvent e){
+    private OutgoingEvent handlePublicMessageEvent(MessageEvent e){
         String outgoingMessage = String.format("%s: %s",controller.getUser(e.getMarsid()).getName(), e.getMessage());
         return EventFactory.getInstance().createBroadcastEvent(outgoingMessage);
     }
 
-    private static OutgoingEvent handlePrivateMessageEvent(PrivateMessageEvent e){
+    private OutgoingEvent handlePrivateMessageEvent(PrivateMessageEvent e){
         String outgoingMessage = String.format("%s: %s", controller.getUser(e.getMarsid()).getName(), e.getMessage());
         storeMessageInDatabase(e);
         return EventFactory.getInstance().createMulticastEvent(outgoingMessage, Integer.parseInt(e.getChatid()));
     }
 
-    private static OutgoingEvent handleChatRequest(ChatRequestEvent e){
+    private OutgoingEvent handleChatRequest(ChatRequestEvent e){
         int sendermid = e.getMarsid();
         int receivercontactid = e.getReceivercontactid();
         int receivermid = controller.getUserByContactid(receivercontactid).getMarsid();
@@ -78,14 +83,14 @@ public class Chatroom {
         return response;
     }
 
-    private static void storeMessageInDatabase(PrivateMessageEvent e){
+    private void storeMessageInDatabase(PrivateMessageEvent e){
         int chatid = Integer.parseInt(e.getChatid());
         int marsid = e.getMarsid();
         String messageContents = e.getMessage();
         controller.addChatMessage(chatid, marsid, messageContents);
     }
 
-    private static void storeUserSubscriptionInDatabase(SubscriptionEvent e){
+    private void storeUserSubscriptionInDatabase(SubscriptionEvent e){
         controller.insertUserPushSubscription(e.getMarsid(),e.getData().toString());
     }
 
