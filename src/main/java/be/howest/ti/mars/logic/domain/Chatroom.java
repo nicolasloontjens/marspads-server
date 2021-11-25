@@ -24,6 +24,8 @@ public class Chatroom {
             case REQUEST:
                 outgoingEvent = handleChatRequest((ChatRequestEvent) e);
                 break;
+            case SUBSCRIPTION:
+                break;
             default:
                 break;
         }
@@ -78,5 +80,9 @@ public class Chatroom {
         int marsid = e.getMarsid();
         String messageContents = e.getMessage();
         controller.addChatMessage(chatid, marsid, messageContents);
+    }
+
+    private static void storeUserSubscriptionInDatabase(SubscriptionEvent e){
+
     }
 }

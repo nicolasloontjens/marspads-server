@@ -8,6 +8,7 @@ public enum EventType {
     MESSAGE("message"),
     DISCARD("discard"),
     PRIVATEMESSAGE("privatemessage"),
+    SUBSCRIPTION("subscription"),
     REQUEST("chatrequest");
 
     private final String type;
