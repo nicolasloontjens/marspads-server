@@ -88,9 +88,7 @@ public class Chatroom {
         }
         switch(value){
             case 0:
-            case -1:
-                //receiver says no => send no response to sender
-                //receiver hasn't seen it yet
+                //receiver hasn't seen it yet => send notification to receiver
                 response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid), receivermid, value);
                 sendChatRequestNotification(e);
                 break;
@@ -99,6 +97,8 @@ public class Chatroom {
                 response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid),sendermid,value);
                 controller.addChatid(sendermid,receivermid);
                 break;
+            case -1:
+
             default:
                 break;
         }
@@ -121,14 +121,17 @@ public class Chatroom {
         int receivermid = controller.getUserByContactid(e.getReceivercontactid()).getMarsid();
         User sender = controller.getUser(e.getMarsid());
         NotificationData receiverPushData = controller.retrieveSubscriptionData(receivermid);
-        String payload = String.format("%s has sent you a chat request!",sender.getName());
+        JsonObject obj = new JsonObject();
+        obj.put("type","chatrequest");
+        obj.put("sendername", sender.getName());
+        obj.put("sendermid",sender.getMarsid());
+        obj.put("receivermid",receivermid);
+        obj.put("value",0);
         try{
-            Notification notification = new Notification(receiverPushData.getEndpoint(), receiverPushData.getUserkey(), receiverPushData.getAuth(), payload);
+            Notification notification = new Notification(receiverPushData.getEndpoint(), receiverPushData.getUserkey(), receiverPushData.getAuth(), obj.toString());
             pushService.send(notification);
         } catch (JoseException | GeneralSecurityException | IOException | ExecutionException | InterruptedException ex) {
             LOGGER.log(Level.SEVERE,"Something went wrong sending a message to the client:", ex);
         }
-
     }
-
 }
