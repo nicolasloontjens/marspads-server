@@ -9,14 +9,6 @@ public class UnicastEvent extends OutgoingEvent{
     private final int chatid;
     private final int value;
 
-    public UnicastEvent(User sender, int receivermid, int value) {
-        super(EventType.UNICAST, "");
-        this.chatid = -1;
-        this.sender = sender;
-        this.receivermid = receivermid;
-        this.value = value;
-    }
-
     public UnicastEvent(User sender, int receivermid, int value, int chatid) {
         super(EventType.UNICAST, "");
         this.chatid = chatid;

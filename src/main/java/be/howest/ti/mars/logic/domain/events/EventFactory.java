@@ -32,7 +32,7 @@ public class EventFactory {
                 event = new ChatRequestEvent(json.getInteger("sendermid"), json.getInteger("receivercontactid"), json.getInteger("answer"));
                 break;
             case SUBSCRIPTION:
-                event = new SubscriptionEvent(json.getInteger("marsid"),json.getJsonObject("subscription"));
+                event = new SubscriptionEvent(json.getInteger(MARSID),json.getJsonObject("subscription"));
                 break;
             default:
                 break;
@@ -50,8 +50,5 @@ public class EventFactory {
 
     public UnicastEvent createUnicastEvent(User sender, int receivermid, int value, int chatid){
         return new UnicastEvent(sender, receivermid,value, chatid);
-    }
-    public UnicastEvent createUnicastEvent(User sender, int receivermid, int value){
-        return new UnicastEvent(sender, receivermid,value);
     }
 }

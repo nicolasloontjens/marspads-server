@@ -56,18 +56,41 @@ class ChatroomTest {
         assertNotEquals("",result.getMessage());
     }
 
-    /*
-    todo: fix test
     @Test
     void testHandleChatRequest(){
-        ChatRequestEvent event = new ChatRequestEvent(1,2,0);
+        ChatRequestEvent event = new ChatRequestEvent(1,2,1);
         Chatroom chatroom = Chatroom.getInstance();
         UnicastEvent result = (UnicastEvent) chatroom.handleEvent(event);
         assertEquals(UnicastEvent.class,result.getClass());
         assertEquals(EventType.UNICAST,result.getType());
-        assertEquals(0,result.getValue());
+        assertEquals(1,result.getValue());
         assertEquals(1,result.getSendermid());
         assertNotEquals("",result.getSendername());
     }
-    */
+
+    @Test
+    void testsendChatRequestNotification(){
+        ChatRequestEvent event = new ChatRequestEvent(1,2,1);
+        Chatroom chatroom = Chatroom.getInstance();
+        assertThrows(NullPointerException.class, () -> {
+            chatroom.sendChatRequestNotification(event);
+        });
+    }
+
+    @Test
+    void storeUserSubscriptionInDB(){
+        JsonObject obj = new JsonObject();
+        JsonObject keys = new JsonObject();
+        keys.put("p256dh","a");
+        keys.put("auth","b");
+        obj.put("endpoint","test");
+        obj.put("keys",keys);
+        JsonObject finalObj = new JsonObject();
+        finalObj.put("marsid", 1);
+        finalObj.put("type","subscription");
+        finalObj.put("subscription",obj);
+        SubscriptionEvent event = (SubscriptionEvent) EventFactory.getInstance().createIncomingEvent(finalObj);
+        Chatroom chatroom = Chatroom.getInstance();
+        chatroom.storeUserSubscriptionInDatabase(event);
+    }
 }

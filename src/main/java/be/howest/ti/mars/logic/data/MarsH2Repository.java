@@ -5,7 +5,6 @@ import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
-import io.vertx.core.json.JsonObject;
 import org.h2.tools.Server;
 
 import java.io.IOException;

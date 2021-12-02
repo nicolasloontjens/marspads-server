@@ -21,7 +21,6 @@ public class EventsTest {
         return obj;
     }
 
-
     @Test
     void testCreateMessageEvent(){
 
@@ -37,6 +36,16 @@ public class EventsTest {
     void testDiscardEvent(){
         JsonObject obj = createbasicjsonobject();
         obj.put("type", "");
+        IncomingEvent event = getEventFactory().createIncomingEvent(obj);
+        assertEquals(DiscardEvent.class, event.getClass());
+        assertEquals(EventType.DISCARD,event.getType());
+        assertEquals(1,event.getMarsid());
+    }
+
+    @Test
+    void testDiscardEvent2(){
+        JsonObject obj = new JsonObject();
+        obj.put("sendermid",1);
         IncomingEvent event = getEventFactory().createIncomingEvent(obj);
         assertEquals(DiscardEvent.class, event.getClass());
         assertEquals(EventType.DISCARD,event.getType());
@@ -97,6 +106,25 @@ public class EventsTest {
         assertEquals(2, event.getReceivermid());
         assertEquals(1,event.getValue());
         assertEquals(1,event.getChatid());
+    }
+
+    @Test
+    void testSubscriptionEvent(){
+        JsonObject obj = new JsonObject();
+        JsonObject keys = new JsonObject();
+        keys.put("p256dh","a");
+        keys.put("auth","b");
+        obj.put("endpoint","test");
+        obj.put("keys",keys);
+        JsonObject finalObj = createbasicjsonobject();
+        finalObj.put("type","subscription");
+        finalObj.put("subscription",obj);
+        SubscriptionEvent event = (SubscriptionEvent)getEventFactory().createIncomingEvent(finalObj);
+        assertEquals(EventType.SUBSCRIPTION,event.getType());
+        assertEquals(1, event.getMarsid());
+        assertEquals("a", event.getData().getUserkey());
+        assertEquals("b",event.getData().getAuth());
+        assertEquals("test",event.getData().getEndpoint());
     }
 
 

@@ -12,10 +12,7 @@ import org.jose4j.lang.JoseException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -102,18 +99,18 @@ public class Chatroom {
         return response;
     }
 
-    private void storeMessageInDatabase(PrivateMessageEvent e){
+    public void storeMessageInDatabase(PrivateMessageEvent e){
         int chatid = Integer.parseInt(e.getChatid());
         int marsid = e.getMarsid();
         String messageContents = e.getMessage();
         controller.addChatMessage(chatid, marsid, messageContents);
     }
 
-    private void storeUserSubscriptionInDatabase(SubscriptionEvent e){
+    public void storeUserSubscriptionInDatabase(SubscriptionEvent e){
         controller.insertUserPushSubscription(e.getMarsid(),e.getData());
     }
 
-    private void sendChatRequestNotification(ChatRequestEvent e) {
+    public void sendChatRequestNotification(ChatRequestEvent e) {
         //get the receivers notification data, and send them a request
         int receivermid = controller.getUserByContactid(e.getReceivercontactid()).getMarsid();
         User sender = controller.getUser(e.getMarsid());
@@ -129,6 +126,7 @@ public class Chatroom {
             pushService.send(notification);
         } catch (JoseException | GeneralSecurityException | IOException | ExecutionException | InterruptedException ex) {
             LOGGER.log(Level.SEVERE,"Something went wrong sending a message to the client:", ex);
+            Thread.currentThread().interrupt();
         }
     }
 }

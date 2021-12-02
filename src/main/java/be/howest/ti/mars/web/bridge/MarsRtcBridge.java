@@ -48,7 +48,6 @@ public class MarsRtcBridge {
     }
 
     public void handleIncomingMessage(Message<JsonObject> msg){
-        System.out.println(msg.body());
         IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
         OutgoingEvent outgoingEvent = chatroom.handleEvent(incomingEvent);
         handleOutgoingEvent(outgoingEvent);
