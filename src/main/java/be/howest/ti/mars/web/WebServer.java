@@ -1,6 +1,7 @@
 package be.howest.ti.mars.web;
 
 import be.howest.ti.mars.logic.data.Repositories;
+import be.howest.ti.mars.logic.util.Config;
 import be.howest.ti.mars.web.bridge.MarsOpenApiBridge;
 import be.howest.ti.mars.web.bridge.MarsRtcBridge;
 import io.vertx.config.ConfigRetriever;
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class WebServer extends AbstractVerticle {
     private static final String CHNL_TO_SERVER = "events.to.server";
-    private static final String CHNL_ROOT_PATH = "/events/*";
+    private static final String CHNL_ROOT_PATH = Config.getInstance().readSetting("CHNLROOTPATH");
     private static final Logger LOGGER = Logger.getLogger(WebServer.class.getName());
     private Promise<Void> startPromise;
     private final MarsOpenApiBridge openApiBridge;
@@ -61,6 +62,7 @@ public class WebServer extends AbstractVerticle {
                                 Router mainRouter = Router.router(vertx);
                                 mainRouter.route().handler(createCorsHandler());
                                 mainRouter.route(CHNL_ROOT_PATH).handler(rtcBridge.createSockJSHandler(vertx));
+                                rtcBridge.createChatroom();
                                 rtcBridge.setEb(vertx);
                                 vertx.eventBus().consumer(CHNL_TO_SERVER,rtcBridge::handleIncomingMessage);
 

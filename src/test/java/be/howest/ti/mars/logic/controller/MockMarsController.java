@@ -2,7 +2,9 @@ package be.howest.ti.mars.logic.controller;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
+import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,12 +73,22 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatid(int marsid1, int marsid2) {
-        return false;
+    public int addChatid(int marsid1, int marsid2) {
+        return 0;
     }
 
     @Override
     public boolean addChatMessage(int chatid, int marsid, String content) {
         return false;
+    }
+
+    @Override
+    public void insertUserPushSubscription(int marsid, NotificationData subscription) {
+
+    }
+
+    @Override
+    public NotificationData retrieveSubscriptionData(int marsid) {
+        return null;
     }
 }

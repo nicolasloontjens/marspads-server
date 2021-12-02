@@ -30,9 +30,11 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
  */
 public class MarsRtcBridge {
     private EventBus eb;
+    private Chatroom chatroom;
     private static final String CHNL_TO_CLIENTS = "events.to.clients";
     private static final String CHNL_TO_CLIENT_MULTICAST = "events.to.clients.";
     private static final String CHNL_TO_CLIENT_UNICAST = "events.to.clients.mid.";
+
 
     public SockJSHandler createSockJSHandler(Vertx vertx) {
         final SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
@@ -46,9 +48,8 @@ public class MarsRtcBridge {
     }
 
     public void handleIncomingMessage(Message<JsonObject> msg){
-        System.out.println(msg.body());
         IncomingEvent incomingEvent = EventFactory.getInstance().createIncomingEvent(msg.body());
-        OutgoingEvent outgoingEvent = Chatroom.handleEvent(incomingEvent);
+        OutgoingEvent outgoingEvent = chatroom.handleEvent(incomingEvent);
         handleOutgoingEvent(outgoingEvent);
     }
 
@@ -57,6 +58,7 @@ public class MarsRtcBridge {
     }
 
     private void handleOutgoingEvent(OutgoingEvent outgoingEvent){
+        if(outgoingEvent != null){
         switch(outgoingEvent.getType()){
             case BROADCAST:
                 broadcastMessage((BroadcastEvent) outgoingEvent);
@@ -70,6 +72,7 @@ public class MarsRtcBridge {
             default:
                 break;
         }
+        }
     }
 
     private void broadcastMessage(BroadcastEvent event){
@@ -82,10 +85,14 @@ public class MarsRtcBridge {
 
     private void unicastMessage(UnicastEvent event){
         JsonObject obj = new JsonObject();
-        obj.put("sendername", event.getSendername());
         obj.put("sendermid",event.getSendermid());
         obj.put("receivermid",event.getReceivermid());
-        obj.put("value",event.getValue());
+        obj.put("chatid",event.getChatid());
+        eb.publish(CHNL_TO_CLIENT_UNICAST + event.getSendermid(), obj);
         eb.publish(CHNL_TO_CLIENT_UNICAST + event.getReceivermid(), obj);
+    }
+
+    public void createChatroom() {
+        chatroom = Chatroom.getInstance();
     }
 }

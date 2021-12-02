@@ -9,7 +9,10 @@ drop table if exists user;
 create table user
 (
     marsid  int primary key not null,
-    name    varchar(255) not null
+    name    varchar(255) not null,
+    endpoint varchar(1000),
+    userkey varchar(1000),
+    auth varchar(1000)
 );
 
 drop table if exists marsidcontactid;

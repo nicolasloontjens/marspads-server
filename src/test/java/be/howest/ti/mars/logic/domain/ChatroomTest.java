@@ -39,7 +39,8 @@ class ChatroomTest {
     @Test
     void testHandleMessage(){
         MessageEvent event = new MessageEvent(1,"hello mr fors");
-        OutgoingEvent result = Chatroom.handleEvent(event);
+        Chatroom chatroom = Chatroom.getInstance();
+        OutgoingEvent result = chatroom.handleEvent(event);
         assertEquals(BroadcastEvent.class,result.getClass());
         assertNotEquals("",result.getMessage());
         assertEquals(EventType.BROADCAST, result.getType());
@@ -48,7 +49,8 @@ class ChatroomTest {
     @Test
     void testHandlePrivateMessage(){
         PrivateMessageEvent event = new PrivateMessageEvent(1,"","2");
-        OutgoingEvent result = Chatroom.handleEvent(event);
+        Chatroom chatroom = Chatroom.getInstance();
+        OutgoingEvent result = chatroom.handleEvent(event);
         assertEquals(MulticastEvent.class,result.getClass());
         assertEquals(EventType.MULTICAST,result.getType());
         assertNotEquals("",result.getMessage());
@@ -56,12 +58,39 @@ class ChatroomTest {
 
     @Test
     void testHandleChatRequest(){
-        ChatRequestEvent event = new ChatRequestEvent(1,2,0);
-        UnicastEvent result = (UnicastEvent) Chatroom.handleEvent(event);
+        ChatRequestEvent event = new ChatRequestEvent(1,2,1);
+        Chatroom chatroom = Chatroom.getInstance();
+        UnicastEvent result = (UnicastEvent) chatroom.handleEvent(event);
         assertEquals(UnicastEvent.class,result.getClass());
         assertEquals(EventType.UNICAST,result.getType());
-        assertEquals(0,result.getValue());
+        assertEquals(1,result.getValue());
         assertEquals(1,result.getSendermid());
         assertNotEquals("",result.getSendername());
+    }
+
+    @Test
+    void testsendChatRequestNotification(){
+        ChatRequestEvent event = new ChatRequestEvent(1,2,1);
+        Chatroom chatroom = Chatroom.getInstance();
+        assertThrows(NullPointerException.class, () -> {
+            chatroom.sendChatRequestNotification(event);
+        });
+    }
+
+    @Test
+    void storeUserSubscriptionInDB(){
+        JsonObject obj = new JsonObject();
+        JsonObject keys = new JsonObject();
+        keys.put("p256dh","a");
+        keys.put("auth","b");
+        obj.put("endpoint","test");
+        obj.put("keys",keys);
+        JsonObject finalObj = new JsonObject();
+        finalObj.put("marsid", 1);
+        finalObj.put("type","subscription");
+        finalObj.put("subscription",obj);
+        SubscriptionEvent event = (SubscriptionEvent) EventFactory.getInstance().createIncomingEvent(finalObj);
+        Chatroom chatroom = Chatroom.getInstance();
+        chatroom.storeUserSubscriptionInDatabase(event);
     }
 }

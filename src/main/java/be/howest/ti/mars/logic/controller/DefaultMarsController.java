@@ -3,7 +3,9 @@ package be.howest.ti.mars.logic.controller;
 import be.howest.ti.mars.logic.data.Repositories;
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
+import io.vertx.core.json.JsonObject;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -72,12 +74,7 @@ public class DefaultMarsController implements MarsController {
         nameFaker.add("Thor");
         nameFaker.add("Lando");
         nameFaker.add("Alvin");
-        nameFaker.add("Frédéric");
-        nameFaker.add("Guy");
-        nameFaker.add("Thijs");
-        nameFaker.add("Dirk");
-        nameFaker.add("Dirk");
-        int randnr = rand.nextInt(25);
+        int randnr = rand.nextInt(26);
         return nameFaker.get(randnr);
     }
 
@@ -88,7 +85,9 @@ public class DefaultMarsController implements MarsController {
 
     @Override
     public boolean addContact(int marsid, int contactid){
-        return Repositories.getH2Repo().addContact(marsid, contactid);
+        User user1 = getUser(marsid);
+        User user2 = getUserByContactid(contactid);
+        return Repositories.getH2Repo().addContact(marsid, contactid) && Repositories.getH2Repo().addContact(user2.getMarsid(), user1.getContactid());
     }
 
     @Override
@@ -107,12 +106,22 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatid(int marsid1, int marsid2) {
+    public int addChatid(int marsid1, int marsid2) {
         return Repositories.getH2Repo().createChat(marsid1, marsid2);
     }
 
     @Override
     public boolean addChatMessage(int chatid, int marsid, String content) {
         return Repositories.getH2Repo().insertChatMessage(chatid, marsid, content);
+    }
+
+    @Override
+    public void insertUserPushSubscription(int marsid, NotificationData subscription) {
+        Repositories.getH2Repo().insertUserPushSubscription(marsid, subscription);
+    }
+
+    @Override
+    public NotificationData retrieveSubscriptionData(int marsid) {
+        return Repositories.getH2Repo().retrieveSubscriptionDataWithMarsID(marsid);
     }
 }

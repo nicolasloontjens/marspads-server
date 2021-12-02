@@ -2,6 +2,7 @@ package be.howest.ti.mars.logic.data;
 
 import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
+import be.howest.ti.mars.logic.domain.NotificationData;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
@@ -47,6 +48,8 @@ public class MarsH2Repository {
     private static final String SQL_GET_PARTICIPATING_CHATTERS = "select marsid1, marsid2 from chats where chatid = ?";
     private static final String SQL_INSERT_CHAT = "insert into chats (marsid1, marsid2) values(?,?)";
     private static final String SQL_INSERT_CHAT_MESSAGE = "insert into chatmessages(chatid, marsid, content) values(?,?,?)";
+    private static final String SQL_INSERT_SUBSCRIPTION= "update user set endpoint = ?, userkey = ?, auth = ? where marsid = ?";
+    private static final String SQL_RETRIEVE_SUBSCRIPTION= "select endpoint, userkey, auth from user where marsid = ?";
 
 
     private final Server dbWebConsole;
@@ -301,18 +304,26 @@ public class MarsH2Repository {
         }
     }
 
-    public boolean createChat(int marsiduser1, int marsiduser2){
+    public int createChat(int marsiduser1, int marsiduser2){
         try(
                 Connection con = getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT);
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT, Statement.RETURN_GENERATED_KEYS);
         ){
             stmnt.setInt(1,marsiduser1);
             stmnt.setInt(2,marsiduser2);
             int affectedrows = stmnt.executeUpdate();
+
             if(affectedrows == 0){
                 throw new SQLException("Creating chat failed");
             }
-            return true;
+
+            try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    return generatedKeys.getInt(1);
+                }else{
+                    throw new SQLException("Creating user failed, no row affected");
+                }
+            }
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE, "Failed to add chat to database", ex);
             throw new RepositoryException("Failed to add chat");
@@ -335,6 +346,47 @@ public class MarsH2Repository {
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE,"Failed to add message to the chat", ex);
             throw new RepositoryException("Failed to add message");
+        }
+    }
+
+    public void insertUserPushSubscription(int marsid, NotificationData subscription){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_SUBSCRIPTION);
+        ){
+            stmnt.setString(1,subscription.getEndpoint());
+            stmnt.setString(2,subscription.getUserkey());
+            stmnt.setString(3,subscription.getAuth());
+            stmnt.setInt(4,marsid);
+            int affectedrows = stmnt.executeUpdate();
+            if(affectedrows == 0){
+                throw new SQLException("Failed to add subscription");
+            }
+        }catch(SQLException ex) {
+            LOGGER.log(Level.SEVERE,"Failed to add push subscription to user", ex);
+        }
+    }
+
+    public NotificationData retrieveSubscriptionDataWithMarsID(int marsid){
+        try(
+                Connection con = getConnection();
+                PreparedStatement stmnt = con.prepareStatement(SQL_RETRIEVE_SUBSCRIPTION);
+        ){
+            stmnt.setInt(1,marsid);
+            try(ResultSet rs = stmnt.executeQuery()){
+                if(rs.next()){
+                    String endpoint = rs.getString(1);
+                    String userkey = rs.getString(2);
+                    String auth = rs.getString(3);
+                    return new NotificationData(endpoint, userkey, auth);
+                }
+                else{
+                    throw new SQLException("Failed to retrieve data");
+                }
+            }
+        }catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE,"Failed to retrieve push subscription data", ex);
+            throw new RepositoryException("Could not retrieve data.");
         }
     }
 
