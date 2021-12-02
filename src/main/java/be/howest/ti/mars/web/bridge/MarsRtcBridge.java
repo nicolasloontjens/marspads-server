@@ -86,15 +86,14 @@ public class MarsRtcBridge {
 
     private void unicastMessage(UnicastEvent event){
         JsonObject obj = new JsonObject();
-        obj.put("sendername", event.getSendername());
         obj.put("sendermid",event.getSendermid());
         obj.put("receivermid",event.getReceivermid());
-        obj.put("value",event.getValue());
+        obj.put("chatid",event.getChatid());
+        eb.publish(CHNL_TO_CLIENT_UNICAST + event.getSendermid(), obj);
         eb.publish(CHNL_TO_CLIENT_UNICAST + event.getReceivermid(), obj);
     }
 
     public void createChatroom() {
         chatroom = Chatroom.getInstance();
-
     }
 }

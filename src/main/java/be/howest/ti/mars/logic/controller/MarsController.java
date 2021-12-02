@@ -25,7 +25,7 @@ public interface MarsController {
 
     List<ChatMessage> getMessages(int marsid, int chatid);
 
-    boolean addChatid(int marsid1, int marsid2);
+    int addChatid(int marsid1, int marsid2);
 
     boolean addChatMessage(int chatid, int marsid, String content);
 

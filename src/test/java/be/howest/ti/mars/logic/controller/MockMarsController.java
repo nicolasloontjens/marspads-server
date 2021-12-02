@@ -73,8 +73,8 @@ public class MockMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatid(int marsid1, int marsid2) {
-        return false;
+    public int addChatid(int marsid1, int marsid2) {
+        return 0;
     }
 
     @Override

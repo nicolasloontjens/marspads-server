@@ -85,7 +85,9 @@ public class DefaultMarsController implements MarsController {
 
     @Override
     public boolean addContact(int marsid, int contactid){
-        return Repositories.getH2Repo().addContact(marsid, contactid);
+        User user1 = getUser(marsid);
+        User user2 = getUserByContactid(contactid);
+        return Repositories.getH2Repo().addContact(marsid, contactid) && Repositories.getH2Repo().addContact(user2.getMarsid(), user1.getContactid());
     }
 
     @Override
@@ -104,7 +106,7 @@ public class DefaultMarsController implements MarsController {
     }
 
     @Override
-    public boolean addChatid(int marsid1, int marsid2) {
+    public int addChatid(int marsid1, int marsid2) {
         return Repositories.getH2Repo().createChat(marsid1, marsid2);
     }
 

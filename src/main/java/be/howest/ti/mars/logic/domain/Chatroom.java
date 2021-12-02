@@ -88,17 +88,14 @@ public class Chatroom {
         }
         switch(value){
             case 0:
-                //receiver hasn't seen it yet => send notification to receiver
-                response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid), receivermid, value);
                 sendChatRequestNotification(e);
+                //send request to receiver
                 break;
             case 1:
-                //receiver says yes => send yes response to sender and create chat in db
-                response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid),sendermid,value);
-                controller.addChatid(sendermid,receivermid);
+                //receiver responds with yes => send the chatid to both sender and receiver
+                int chatid = controller.addChatid(sendermid,receivermid); // => retrieve the chatid from this function
+                response = EventFactory.getInstance().createUnicastEvent(controller.getUser(sendermid),receivermid,value,chatid);//
                 break;
-            case -1:
-
             default:
                 break;
         }
@@ -126,7 +123,7 @@ public class Chatroom {
         obj.put("sendername", sender.getName());
         obj.put("sendermid",sender.getMarsid());
         obj.put("receivermid",receivermid);
-        obj.put("value",0);
+        obj.put("answer",0);
         try{
             Notification notification = new Notification(receiverPushData.getEndpoint(), receiverPushData.getUserkey(), receiverPushData.getAuth(), obj.toString());
             pushService.send(notification);

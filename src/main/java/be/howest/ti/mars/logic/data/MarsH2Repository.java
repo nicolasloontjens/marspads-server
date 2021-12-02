@@ -305,18 +305,26 @@ public class MarsH2Repository {
         }
     }
 
-    public boolean createChat(int marsiduser1, int marsiduser2){
+    public int createChat(int marsiduser1, int marsiduser2){
         try(
                 Connection con = getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT);
+                PreparedStatement stmnt = con.prepareStatement(SQL_INSERT_CHAT, Statement.RETURN_GENERATED_KEYS);
         ){
             stmnt.setInt(1,marsiduser1);
             stmnt.setInt(2,marsiduser2);
             int affectedrows = stmnt.executeUpdate();
+
             if(affectedrows == 0){
                 throw new SQLException("Creating chat failed");
             }
-            return true;
+
+            try(ResultSet generatedKeys = stmnt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    return generatedKeys.getInt(1);
+                }else{
+                    throw new SQLException("Creating user failed, no row affected");
+                }
+            }
         }catch(SQLException ex){
             LOGGER.log(Level.SEVERE, "Failed to add chat to database", ex);
             throw new RepositoryException("Failed to add chat");

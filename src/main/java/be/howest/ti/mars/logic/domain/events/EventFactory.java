@@ -48,6 +48,9 @@ public class EventFactory {
         return new MulticastEvent(msg, chatid);
     }
 
+    public UnicastEvent createUnicastEvent(User sender, int receivermid, int value, int chatid){
+        return new UnicastEvent(sender, receivermid,value, chatid);
+    }
     public UnicastEvent createUnicastEvent(User sender, int receivermid, int value){
         return new UnicastEvent(sender, receivermid,value);
     }

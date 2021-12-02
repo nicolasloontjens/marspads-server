@@ -90,13 +90,13 @@ public class EventsTest {
 
     @Test
     void testUnicastEvent(){
-        UnicastEvent event = getEventFactory().createUnicastEvent(new User(1,"Michael"), 2,1);
+        UnicastEvent event = getEventFactory().createUnicastEvent(new User(1,"Michael"), 2,1,1);
         assertEquals(UnicastEvent.class,event.getClass());
         assertEquals("Michael",event.getSendername());
         assertEquals(1,event.getSendermid());
         assertEquals(2, event.getReceivermid());
         assertEquals(1,event.getValue());
-
+        assertEquals(1,event.getChatid());
     }
 
 
