@@ -119,9 +119,10 @@ class DefaultMarsControllerTest {
         MarsController marsController = createUserAndContacts();
         marsController.addChatid(1,2);
         Chat chat = marsController.getChatids(1).get(0);
-        Chat chat1 = new Chat(1,"Test");
+        Chat chat1 = new Chat(1,"Test",1);
         assertNotEquals("",chat1.getUsername());
         assertEquals(chat1.getChatid(), chat.getChatid());
+        assertEquals(1,chat1.getContactid());
     }
 
     @Test
