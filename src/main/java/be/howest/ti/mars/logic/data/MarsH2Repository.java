@@ -262,14 +262,14 @@ public class MarsH2Repository {
             while(rs1.next()){
                 int chatid = rs1.getInt(1);
                 int currmarsid = rs1.getInt(2);
-                chats.add(new Chat(chatid,getUser(currmarsid).getName()));
+                chats.add(new Chat(chatid,getUser(currmarsid).getName(),getUser(currmarsid).getContactid()));
             }
             while(rs2.next()){
                 int chatid = rs2.getInt(1);
                 int currmarsid = rs2.getInt(2);
                 String name = getUser(currmarsid).getName();
                 if(chats.stream().noneMatch(chat -> chat.getChatid() == chatid)){
-                    chats.add(new Chat(chatid, name));
+                    chats.add(new Chat(chatid, name,getUser(currmarsid).getContactid()));
                 }
             }
             return chats;
