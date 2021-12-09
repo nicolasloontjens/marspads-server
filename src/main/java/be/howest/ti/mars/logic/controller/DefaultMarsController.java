@@ -92,7 +92,9 @@ public class DefaultMarsController implements MarsController {
 
     @Override
     public boolean deleteContact(int marsid, int contactid){
-        return Repositories.getH2Repo().deleteContact(marsid, contactid);
+        User user1 = getUser(marsid);
+        User user2 = getUserByContactid(contactid);
+        return Repositories.getH2Repo().deleteContact(marsid, contactid) && Repositories.getH2Repo().deleteContact(user2.getMarsid(), user1.getContactid());
     }
 
     @Override
