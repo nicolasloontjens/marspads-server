@@ -6,6 +6,7 @@ import be.howest.ti.mars.logic.domain.Chat;
 import be.howest.ti.mars.logic.domain.ChatMessage;
 import be.howest.ti.mars.logic.domain.User;
 import be.howest.ti.mars.logic.exceptions.MarsResourceNotFoundException;
+import be.howest.ti.mars.logic.exceptions.RepositoryException;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -55,12 +56,16 @@ public class MarsOpenApiBridge {
     }
 
     public void addContact(RoutingContext ctx){
-        boolean res = controller.addContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
-        if(res){
-            Response.sendEmptyResponse(ctx,201);
-        }
-        else{
-            Response.sendEmptyResponse(ctx, 400);
+        try{
+            boolean res = controller.addContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
+            if(res){
+                Response.sendUserAddResponse(ctx,201,"Added contact");
+            }
+            else{
+                Response.sendUserAddResponse(ctx, 400,"Could not add contact");
+            }
+        }catch(RepositoryException ex){
+            Response.sendUserAddResponse(ctx, 400,"Could not add contact");
         }
     }
 

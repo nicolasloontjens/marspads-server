@@ -41,6 +41,10 @@ public class Response {
                 .end();
     }
 
+    public static void sendUserAddResponse(RoutingContext ctx, int statusCode, String message){
+        sendJsonResponse(ctx, statusCode, new JsonObject().put("response",message));
+    }
+
     private static void sendJsonResponse(RoutingContext ctx, int statusCode, Object response) {
         ctx.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
