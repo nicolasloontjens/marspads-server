@@ -13,8 +13,10 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,6 +86,16 @@ public class MarsOpenApiBridge {
         Response.sendMessages(ctx, messages);
     }
 
+    public void getInformation(RoutingContext ctx){
+        Random rand = new SecureRandom();
+        int totalfriends = controller.getContacts(Request.from(ctx).getMarsId()).size();
+        int closestfriend = 0;
+        if(totalfriends  != 0){
+            closestfriend = rand.nextInt(500);
+        }
+        Response.sendGeneralInformation(ctx,totalfriends,rand.nextInt(totalfriends+1),closestfriend );
+    }
+
     public Router buildRouter(RouterBuilder routerBuilder) {
         LOGGER.log(Level.INFO, "Installing cors handlers");
         routerBuilder.rootHandler(createCorsHandler());
@@ -111,6 +123,9 @@ public class MarsOpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: getMessages");
         routerBuilder.operation("getMessages").handler(this::getMessages);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getInformation");
+        routerBuilder.operation("getInformation").handler(this::getInformation);
 
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
