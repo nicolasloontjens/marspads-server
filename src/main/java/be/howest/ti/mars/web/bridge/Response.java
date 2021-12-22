@@ -41,6 +41,14 @@ public class Response {
                 .end();
     }
 
+    public static void sendGeneralInformation(RoutingContext ctx, int totalfriends, int friendsnearyou, int closestfriend){
+        JsonObject obj = new JsonObject();
+        obj.put("total friends", totalfriends);
+        obj.put("friends near you", friendsnearyou);
+        obj.put("closest friend in meters", closestfriend);
+        sendJsonResponse(ctx, 200, obj);
+    }
+
     public static void sendUserAddResponse(RoutingContext ctx, int statusCode, String message){
         sendJsonResponse(ctx, statusCode, new JsonObject().put("response",message));
     }
