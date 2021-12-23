@@ -1,131 +1,62 @@
-# Analysis & Development Project - Mars 2052 - server project
-This is the **server side start-project** for Project II. 
+# MarsPads Server
 
-This start project provides the basic scaffolding for an openapi webserver and an example bridge class for websockets.
+![badge](https://sonar.ti.howest.be/badges/project_badges/quality_gate?project=2021.project-ii:mars-server-17)
+![badge](https://sonar.ti.howest.be/badges/project_badges/measure?project=2021.project-ii:mars-server-17&metric=bugs)
+![badge](https://sonar.ti.howest.be/badges/project_badges/measure?project=2021.project-ii:mars-server-17&metric=code_smells)
+![badge](https://sonar.ti.howest.be/badges/project_badges/measure?project=2021.project-ii:mars-server-17&metric=coverage)
+![badge](https://sonar.ti.howest.be/badges/project_badges/measure?project=2021.project-ii:mars-server-17&metric=vulnerabilities)
+![badge](https://sonar.ti.howest.be/badges/project_badges/measure?project=2021.project-ii:mars-server-17&metric=duplicated_lines_density)
 
-There is already a fully working minimal example api with all the necessary classes.
 
-Example classes (except WebServer.java) are allowed to be modified or deleted.
 
-## Before you start:
-- Choose Zulu jdk version 11 or opendjk 11 (Configure through this through intelij)
-- Make sure to clone **all** the repositories **client**, **server** & **documentation**
-    - **Use the following folder structure**
-        - root_folder_with_name_of_choice
-            - client
-            - documentation
-            - server
+# Server info
 
-## Local CI testing
-You can **run** the Sonar validator **locally!**
+With this server user can :
+- create an account 
+- add and remove other people as friends
+- view their friends list 
+- Users can send chat requests to their friends
+- they can then accept those requests and create chats 
+- In those chats they can send messages to eachother which are stored in the database
+- Users can also join a general chat and talk with all other users, these logs are not stored
 
-There is no need to push to the server to check if you are compliant with our rules.
-In the interest of sparing the server, please result to local testing as often as possible.
+## Features:
 
-**If everyone pushes to test, the remote will not last.**
+- 8 api endpoints
+- Websockets implemented with SockJS that handle the public chatroom and private chatroom and also handle the subscriptions for push notifications
+- Push notifications with [this](https://github.com/web-push-libs/webpush-java) library
+  
 
-To run the analysis open the gradle tab (right side, with the elephant icon), open Tasks, open verification and run (double click)
-the taks **test** then **jacocoTestCoverageVerification** then **jacocoTestReport** then **sonarqube**.
+* [OpenAPI-spec](https://project-ii.ti.howest.be/monitor/swagger-ui/?url=https://project-ii.ti.howest.be/monitor/apis/group-17)
+  
+* [ERD database diagram](https://git.ti.howest.be/TI/2021-2022/s3/analysis-and-development-project/projects/group-17/documentation/-/blob/main/Eerd/Mars-17.png)
 
-The results should now be available on the public sonar. (see section production endpoints)
 
-## Configuring properties
-All properties for a local setup are located in **conf/config.json**.
 
-The remote properties are located on the remote server.
 
-Adding new properties to the local config file is perfectly fine.
+# Run Locally
 
-However, to apply new properties or property modifications on the server please contact mr. Blomme on MS Teams.
-
-Provide a valid config file in json format with filename config-group-XX.
-
-Every thursday at 13:30 the new properties will be pushed to the server.
-
-Please, test the config file thoroughly on your local machine as mistakes will not be fixed until the next thursday at 13:30.
-
-## What's included
-  - A very basic openapi specification
-    - localhost:8080/api/quotes
-  - H2 database web console
-  - The setup of a vert.x and openapi (WebServer.java)
-  - Minimal H2 repository class
-  - A starter class for the RTC topic (MarsRtcBridge.java)
-  - Database maintain scripts
-
-## How to run the start project locally
-In Intelij choose gradle task **run**.
-- Make sure to implement the folder structure as described in section **before you start**.
-    - Otherwise, Vert.x will not find the openapi specification.
-
-## Location OpenApi Specification
-The location of the openapi specification is defined in the file **config**.
-
-The property is called **api.url**.
-
-By default, the local setup will pick the openapi specification located in the **documentation** repository in the folder **api-spec**.
-
-As mentioned before, it's very important to implement the correct folder structure.
-
-If for some reason you want to use another openapi specification, please let the property **api.url** point the correct specification.
-Don't forget to also change the **config file** in the test resources. This property allows relative and absolute paths.
-
-By default this property is assigend the value:
-```json
-"api": {
-    "url": "../documentation/api-spec/openapi-mars.yaml"
-  }
+1. Clone the project in a folder:
+```bash
+git clone git@git.ti.howest.be:TI/2021-2022/s3/analysis-and-development-project/projects/group-17/server.git
 ```
 
-## Local endpoints
- - H2 web client
-   - localhost:9000
-   - url: ~/mars-db
-   - no credentials
- - Web api
-   - localhost:8080/api/quotes
- - Web client
-   - launch through webstorm/phpstorm (see client-side readme)
-  
-## Production endpoints
- - H2 web client
-   - https://project-ii.ti.howest.be/db-17
-   - url: jdbc:h2:/opt/group-17/db-17
-   - username:group-17
-   - password:see Leho for details.
- - Useful information
-   - Server logs
-     - https://project-ii.ti.howest.be/monitor/logs/group-17
-   - Swagger Interface
-     - https://project-ii.ti.howest.be/monitor/swagger/group-17
-     - Through this GUI remote & local API testing is possible!
-   - Overview of all Mars API's
-     - https://project-ii.ti.howest.be/monitor/overview/
-     - Please complete the openapi.yaml file to contribute useful information to the overview page.
- - Web client project
-   - https://project-ii.ti.howest.be/mars-17
- - Sonar
-   - https://sonar.ti.howest.be/dashboard?id=2021.project-ii%3Amars-server-17
-   - https://sonar.ti.howest.be/dashboard?id=2021.project-ii%3Amars-client-17
+2. And also clone the documentation repository:
+```bash
+git clone git@git.ti.howest.be:TI/2021-2022/s3/analysis-and-development-project/projects/group-17/documentation.git
+```
 
-## Keep the database up to date
-There is no need to manually add entries into the database.
+3. And make sure that these 2 folders client and server are in the same root folder
 
-Please use the scripts: **db-create** and **db-populate** in the resource folder.
+4. Then open your favorite Java editor with Gradle support
 
-Everytime you deploy a new version to production the database will be refreshed to the state described in the before mentioned scripts.
+5. **Make sure there isn't anything else running on ports 8089 or 9000**
 
-The **db-create** script is responsible for create the database structure (tables, primary keys, ...)
+6. Run the project with Gradle run  
 
-The **db-populate** script is responsible for populating the database with useful data.
+<br>
 
-## Adding a new openapi call
-   1. Update the openapi specification in the documentation repo
-   2. Update the function **buildRouter** in the class **MarsOpenApiBridge**
-      1. Map the operationId (openapi id) to a new function in the class **MarsOpenApiBridge**
-      1. Create this new function in the **MarsOpenApiBridge**
-      1. At this point you might want to leave this function empty.
-   3. Add the wanted functionality to the controller layer and the layers below.
-   4. Add a new response function in the **Response** class if needed.
-   5. Complete the function from step 2.ii
-   6. Write unit tests
+### The api is now accessible on: http://localhost:8089/  
+
+### The eventbus path is: http://localhost:8089/events
+
