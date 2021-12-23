@@ -41,15 +41,21 @@ public class MarsOpenApiBridge {
     }
 
     public void createUser(RoutingContext ctx){
-        User user = controller.createUser(Request.from(ctx).getMarsId());
-
-        Response.sendUser(ctx, user);
+        try{
+            User user = controller.createUser(Request.from(ctx).getMarsId());
+            Response.sendUser(ctx, user);
+        }catch(RepositoryException ex){
+            Response.sendFailure(ctx, 400,"Could not create user");
+        }
     }
 
     public void getUser(RoutingContext ctx){
-        User user = controller.getUser(Request.from(ctx).getMarsId());
-
-        Response.sendUser(ctx, user);
+        try{
+            User user = controller.getUser(Request.from(ctx).getMarsId());
+            Response.sendUser(ctx, user);
+        }catch(RepositoryException ex){
+            Response.sendFailure(ctx, 400, "Error retrieving user");
+        }
     }
 
     public void getContacts(RoutingContext ctx){
@@ -72,8 +78,12 @@ public class MarsOpenApiBridge {
     }
 
     public void deleteContact(RoutingContext ctx){
-        controller.deleteContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
-        Response.sendEmptyResponse(ctx, 201);
+        try{
+            controller.deleteContact(Request.from(ctx).getMarsId(),Request.from(ctx).getContactId());
+            Response.sendEmptyResponse(ctx, 201);
+        }catch(RepositoryException ex) {
+            Response.sendFailure(ctx, 400, "Could not remove contact");
+        }
     }
 
     public void getChatids(RoutingContext ctx){
@@ -82,8 +92,12 @@ public class MarsOpenApiBridge {
     }
 
     public void getMessages(RoutingContext ctx){
-        List<ChatMessage> messages = controller.getMessages(Request.from(ctx).getMarsId(),Request.from(ctx).getChatid());
-        Response.sendMessages(ctx, messages);
+        try{
+            List<ChatMessage> messages = controller.getMessages(Request.from(ctx).getMarsId(),Request.from(ctx).getChatid());
+            Response.sendMessages(ctx, messages);
+        }catch(RepositoryException ex){
+            Response.sendFailure(ctx, 400, "Could not retrieve messages");
+        }
     }
 
     public void getInformation(RoutingContext ctx){
@@ -93,7 +107,7 @@ public class MarsOpenApiBridge {
         if(totalfriends  != 0){
             closestfriend = rand.nextInt(500);
         }
-        Response.sendGeneralInformation(ctx,totalfriends,rand.nextInt(totalfriends+1),closestfriend );
+        Response.sendGeneralInformation(ctx,totalfriends,rand.nextInt(totalfriends+1),closestfriend);
     }
 
     public Router buildRouter(RouterBuilder routerBuilder) {
