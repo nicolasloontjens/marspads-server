@@ -54,7 +54,6 @@ git clone git@git.ti.howest.be:TI/2021-2022/s3/analysis-and-development-project/
 
 6. Run the project with Gradle run  
 
-<br>
 
 ### The api is now accessible on: http://localhost:8089/  
 
